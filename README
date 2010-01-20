@@ -1,2 +1,19 @@
-Download exe
- http://dl.dropbox.com/u/354108/Msticky/Msticky.exe
+Msticky
+  Display Image Tool.
+
+- Download EXE
+ http://dl.dropbox.com/u/354108/Msticky/Msticky.zip
+
+
+- platform:
+ Windows
+
+- openable file type:
+ *.bmp *.png *.jpeg *.gif *.psd
+
+
+
+- third library:
+ SimplePsd
+ http://www.codeproject.com/KB/graphics/simplepsd.aspx
+
