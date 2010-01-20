@@ -52,11 +52,23 @@ namespace Msticky
         {
             switch (e.KeyCode)
             {
+                case Keys.A:
+                    this.Opacity += 0.2;
+                    break;
+                case Keys.S:
+                    this.Opacity -= 0.2;
+                    break;
                 case Keys.Right:
-                    this.Opacity += 0.1;
+                    this.Left += 1;
                     break;
                 case Keys.Left:
-                    this.Opacity -= 0.1;
+                    this.Left -= 1;
+                    break;
+                case Keys.Up:
+                    this.Top -= 1;
+                    break;
+                case Keys.Down:
+                    this.Top += 1;
                     break;
             }
         }
@@ -64,6 +76,21 @@ namespace Msticky
         private void topToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.TopMost = !this.TopMost;
+        }
+
+        // http://www.atmarkit.co.jp/fdotnet/dotnettips/676dragdrop/dragdrop.html
+        private void Form1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            SetImage(files[0]);
+        }
+
+        private void Form1_DragOver(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
         }
     }
 }
