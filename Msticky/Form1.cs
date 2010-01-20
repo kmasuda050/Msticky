@@ -6,12 +6,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using SimplePsd;
 
 namespace Msticky
 {
     public partial class Form1 : Form
     {
-        Bitmap bitmap;
+        private Bitmap bitmap;
+        private SimplePsd.CPSD psd;
 
         public Form1()
         {
@@ -22,26 +24,64 @@ namespace Msticky
         private void Form1_Load(object sender, EventArgs e)
         {
             bitmap = null;
+            psd = null;
             this.TopMost = true;
+        }
+
+        private void SetImagePsd(String file)
+        {
+            psd = new SimplePsd.CPSD();
+            int nResult = psd.Load(file);
+            if (nResult == 0)
+            {
+                //int nCompression = psd.GetCompression();
+                pictureBox1.Image = Image.FromHbitmap(psd.GetHBitmap());
+                pictureBox1.Size = pictureBox1.Image.Size;
+                this.ClientSize = pictureBox1.Image.Size;
+            }
+            else if (nResult == -1)
+                MessageBox.Show("Cannot open the File");
+            else if (nResult == -2)
+                MessageBox.Show("Invalid (or unknown) File Header");
+            else if (nResult == -3)
+                MessageBox.Show("Invalid (or unknown) ColourMode Data block");
+            else if (nResult == -4)
+                MessageBox.Show("Invalid (or unknown) Image Resource block");
+            else if (nResult == -5)
+                MessageBox.Show("Invalid (or unknown) Layer and Mask Information section");
+            else if (nResult == -6)
+                MessageBox.Show("Invalid (or unknown) Image Data block");
         }
 
         private void SetImage(String file)
         {
-            if (bitmap != null)
-                bitmap.Dispose();
-            bitmap = new Bitmap(file);
-
-            pictureBox1.Image = bitmap;
             pictureBox1.Location = new Point(0, 0);
-            pictureBox1.Size = bitmap.Size;
 
-            this.ClientSize = bitmap.Size;
+            if (bitmap != null)
+            {
+                bitmap.Dispose();
+                bitmap = null;
+            }
+            if (psd != null)
+                psd = null;
+
+            if (file.EndsWith("psd"))
+            {
+                SetImagePsd(file);
+            }
+            else
+            {
+                bitmap = new Bitmap(file);
+                pictureBox1.Image = bitmap;
+                pictureBox1.Size = bitmap.Size;
+                this.ClientSize = bitmap.Size;
+            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg)|*.bmp;*.png;*.gif;*.jpg;*.jpeg";
+            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 SetImage(ofd.FileName);
