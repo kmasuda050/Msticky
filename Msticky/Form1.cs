@@ -15,6 +15,7 @@ namespace Msticky
         private Bitmap bitmap;
         private SimplePsd.CPSD psd;
         private Point mousePoint;
+        private Boolean isPictureBoxLocationRest;
 
         public Form1()
         {
@@ -26,6 +27,7 @@ namespace Msticky
         {
             bitmap = null;
             psd = null;
+            isPictureBoxLocationRest = false;
             this.TopMost = true;
         }
 
@@ -174,6 +176,9 @@ namespace Msticky
                 return;
 
             mousePoint = new Point(e.X, e.Y);
+
+            if (e.Clicks == 2)
+                isPictureBoxLocationRest = true;
         }
 
         private void mouseMove(MouseEventArgs e)
@@ -190,6 +195,16 @@ namespace Msticky
             {
                 this.Left += e.X - mousePoint.X;
                 this.Top += e.Y - mousePoint.Y;
+            }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (isPictureBoxLocationRest)
+            {
+                pictureBox1.Left = 0;
+                pictureBox1.Top = 0;
+                isPictureBoxLocationRest = false;
             }
         }
     }
