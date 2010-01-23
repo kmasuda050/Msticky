@@ -14,6 +14,7 @@ namespace Msticky
     {
         private Bitmap bitmap;
         private SimplePsd.CPSD psd;
+        private Point mousePoint;
 
         public Form1()
         {
@@ -131,6 +132,22 @@ namespace Msticky
                 e.Effect = DragDropEffects.Copy;
             else
                 e.Effect = DragDropEffects.None;
+        }
+
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
+                return;
+
+            mousePoint = new Point(e.X, e.Y);
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
+                return;
+            this.Left += e.X - mousePoint.X;
+            this.Top += e.Y - mousePoint.Y;
         }
     }
 }
