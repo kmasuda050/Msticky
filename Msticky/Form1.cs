@@ -91,6 +91,20 @@ namespace Msticky
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.A:
+                        this.Opacity = 1.0;
+                        break;
+                    case Keys.S:
+                        this.Opacity = 0.0;
+                        break;
+                }
+                return;
+            }
+
             switch (e.KeyCode)
             {
                 case Keys.A:
