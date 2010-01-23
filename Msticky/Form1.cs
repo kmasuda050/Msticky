@@ -150,18 +150,47 @@ namespace Msticky
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
+            mouseDown(e);
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            mouseMove(e);
+        }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            mouseDown(e);
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            mouseMove(e);
+        }
+
+        private void mouseDown(MouseEventArgs e)
+        {
             if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
                 return;
 
             mousePoint = new Point(e.X, e.Y);
         }
 
-        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        private void mouseMove(MouseEventArgs e)
         {
             if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
                 return;
-            this.Left += e.X - mousePoint.X;
-            this.Top += e.Y - mousePoint.Y;
+
+            if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                pictureBox1.Left += e.X - mousePoint.X;
+                pictureBox1.Top += e.Y - mousePoint.Y;
+            }
+            else
+            {
+                this.Left += e.X - mousePoint.X;
+                this.Top += e.Y - mousePoint.Y;
+            }
         }
     }
 }
