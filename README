@@ -9,11 +9,16 @@ Msticky
  Windows
 
 - openable file type:
- *.bmp *.png *.jpeg *.gif *.psd
+ *.bmp *.png *.jpeg *.gif *.psd *.tga etc...
+
+ FreeImage Supported Formats.
+ http://freeimage.sourceforge.net/features.html
 
 
+- develop
+ Visual C# 2008 Express Edition
 
 - third library:
- SimplePsd
- http://www.codeproject.com/KB/graphics/simplepsd.aspx
+ FreeImage
+ http://freeimage.sourceforge.net/
 

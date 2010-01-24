@@ -6,14 +6,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SimplePsd;
+using FreeImageAPI;
+using FreeImageAPI.Plugins;
 
 namespace Msticky
 {
     public partial class Form1 : Form
     {
-        private Bitmap bitmap;
-        private SimplePsd.CPSD psd;
+        private FreeImageBitmap bitmap = null;
         private Point mousePoint;
         private Boolean isPictureBoxLocationRest;
 
@@ -26,58 +26,49 @@ namespace Msticky
         private void Form1_Load(object sender, EventArgs e)
         {
             bitmap = null;
-            psd = null;
             isPictureBoxLocationRest = false;
             this.TopMost = true;
-        }
-
-        private void SetImagePsd(String file)
-        {
-            psd = new SimplePsd.CPSD();
-            int nResult = psd.Load(file);
-            if (nResult == 0)
-            {
-                //int nCompression = psd.GetCompression();
-                pictureBox1.Image = Image.FromHbitmap(psd.GetHBitmap());
-                pictureBox1.Size = pictureBox1.Image.Size;
-                this.ClientSize = pictureBox1.Image.Size;
-            }
-            else if (nResult == -1)
-                MessageBox.Show("Cannot open the File");
-            else if (nResult == -2)
-                MessageBox.Show("Invalid (or unknown) File Header");
-            else if (nResult == -3)
-                MessageBox.Show("Invalid (or unknown) ColourMode Data block");
-            else if (nResult == -4)
-                MessageBox.Show("Invalid (or unknown) Image Resource block");
-            else if (nResult == -5)
-                MessageBox.Show("Invalid (or unknown) Layer and Mask Information section");
-            else if (nResult == -6)
-                MessageBox.Show("Invalid (or unknown) Image Data block");
         }
 
         private void SetImage(String file)
         {
             pictureBox1.Location = new Point(0, 0);
 
-            if (bitmap != null)
+            try
             {
-                bitmap.Dispose();
-                bitmap = null;
-            }
-            if (psd != null)
-                psd = null;
+                FreeImageBitmap fib = new FreeImageBitmap(file);
+                FreeImagePlugin plug = PluginRepository.Plugin(fib.ImageFormat);
 
-            if (file.EndsWith("psd"))
-            {
-                SetImagePsd(file);
-            }
-            else
-            {
-                bitmap = new Bitmap(file);
-                pictureBox1.Image = bitmap;
+                if (fib == null || fib.IsDisposed)
+                {
+                    MessageBox.Show("Unexpected error.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (fib.ImageType != FREE_IMAGE_TYPE.FIT_BITMAP)
+                {
+                    if (!fib.ConvertType(FREE_IMAGE_TYPE.FIT_BITMAP, true))
+                    {
+                        MessageBox.Show("Error converting bitmap to standard type.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+
+                if ((bitmap != null) && !object.ReferenceEquals(bitmap, fib))
+                {
+                    bitmap.Dispose();
+                }
+                if (pictureBox1.Image != null)
+                {
+                    pictureBox1.Image.Dispose();
+                }
+
+                pictureBox1.Image = (Bitmap)(bitmap = fib);
                 pictureBox1.Size = bitmap.Size;
                 this.ClientSize = bitmap.Size;
+            }
+            catch
+            {
             }
         }
 
