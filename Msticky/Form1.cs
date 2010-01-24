@@ -28,6 +28,12 @@ namespace Msticky
             bitmap = null;
             isPictureBoxLocationRest = false;
             this.TopMost = true;
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                SetImage(args[1]);
+            }
         }
 
         private void SetImage(String file)
