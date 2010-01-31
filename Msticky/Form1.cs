@@ -15,7 +15,7 @@ namespace Msticky
     {
         private FreeImageBitmap bitmap = null;
         private Point mousePoint;
-        private Boolean isPictureBoxLocationRest;
+        private Size BeforeSize;
 
         public Form1()
         {
@@ -26,7 +26,6 @@ namespace Msticky
         private void Form1_Load(object sender, EventArgs e)
         {
             bitmap = null;
-            isPictureBoxLocationRest = false;
             this.TopMost = true;
 
             string[] args = Environment.GetCommandLineArgs();
@@ -124,6 +123,10 @@ namespace Msticky
                 case Keys.Down:
                     this.Top += 1;
                     break;
+                case Keys.Z:
+                    pictureBox1.Left = 0;
+                    pictureBox1.Top = 0;
+                    break;
             }
         }
 
@@ -175,7 +178,26 @@ namespace Msticky
             mousePoint = new Point(e.X, e.Y);
 
             if (e.Clicks == 2)
-                isPictureBoxLocationRest = true;
+            {
+                if (this.FormBorderStyle == FormBorderStyle.Sizable)
+                {
+                    BeforeSize = this.ClientSize;
+
+                    this.ClientSize = new Size(32,32);
+                    pictureBox1.Size = this.ClientSize;
+                    pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                    this.FormBorderStyle = FormBorderStyle.None;
+                }
+                else
+                {
+                    pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
+                    pictureBox1.Size = BeforeSize;
+                    this.ClientSize = BeforeSize;
+                    
+                    this.FormBorderStyle = FormBorderStyle.Sizable;
+                }
+            }
         }
 
         private void mouseMove(MouseEventArgs e)
@@ -193,26 +215,6 @@ namespace Msticky
                 this.Left += e.X - mousePoint.X;
                 this.Top += e.Y - mousePoint.Y;
             }
-        }
-
-        private void mouseUp()
-        {
-            if (isPictureBoxLocationRest)
-            {
-                pictureBox1.Left = 0;
-                pictureBox1.Top = 0;
-                isPictureBoxLocationRest = false;
-            }
-        }
-
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
-        {
-            mouseUp();
-        }
-
-        private void Form1_MouseUp(object sender, MouseEventArgs e)
-        {
-            mouseUp();
         }
     }
 }
