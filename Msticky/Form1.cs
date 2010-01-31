@@ -195,7 +195,7 @@ namespace Msticky
             }
         }
 
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        private void mouseUp()
         {
             if (isPictureBoxLocationRest)
             {
@@ -203,6 +203,16 @@ namespace Msticky
                 pictureBox1.Top = 0;
                 isPictureBoxLocationRest = false;
             }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            mouseUp();
+        }
+
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            mouseUp();
         }
     }
 }
