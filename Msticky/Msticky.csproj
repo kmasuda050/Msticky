@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FreeImageNET, Version=3.13.1.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SimplePsd, Version=1.0.6.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\FreeImageNET.dll</HintPath>
+      <HintPath>.\SimplePsd.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -95,6 +95,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>COPY "$(ProjectDir)FreeImage.dll" "$(ProjectDir)$(OutDir)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
