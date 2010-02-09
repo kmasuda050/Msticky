@@ -7,11 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SimplePsd;
+using System.Runtime.InteropServices;
 
 namespace Msticky
 {
     public partial class Form1 : Form
     {
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
+
         private Bitmap bitmap = null;
         private SimplePsd.CPSD psd;
         private Point mousePoint;
@@ -21,9 +27,55 @@ namespace Msticky
         private Boolean doubleClick;
         private Boolean icon;
 
+        [DllImport("user32.dll")]
+        private static extern bool InsertMenuItem(IntPtr hMenu, UInt32 uItem, bool fByPosition, ref MENUITEMINFO mii);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, UInt32 bRevert);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MENUITEMINFO
+        {
+            internal UInt32 cbSize;
+            internal UInt32 fMask;
+            internal UInt32 fType;
+            internal UInt32 fState;
+            internal UInt32 wID;
+            internal IntPtr hSubMenu;
+            internal IntPtr hbmpChecked;
+            internal IntPtr hbmpUnchecked;
+            internal UInt32 dwItemData;
+            internal string dwTypeData;
+            internal UInt32 cch;
+            internal IntPtr hbmpItem;
+        };
+
+        const int MIIM_ID = 0x00000002;
+        const int MIIM_STRING = 0x00000040;
+
         public Form1()
         {
             InitializeComponent();
+
+            // add menu
+            IntPtr hMenu = GetSystemMenu(this.Handle, 0);
+
+            MENUITEMINFO mii = new MENUITEMINFO
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(MENUITEMINFO)),
+                fMask = MIIM_ID | MIIM_STRING,
+
+                fState = 0,
+                wID = (uint)500,
+                hSubMenu = IntPtr.Zero,
+                hbmpChecked = IntPtr.Zero,
+                hbmpUnchecked = IntPtr.Zero,
+                dwItemData = 0,
+                dwTypeData = "Change Freeze",
+                cch = 0,
+                hbmpItem = IntPtr.Zero
+            };
+
+            unchecked { InsertMenuItem(hMenu, 0, false, ref mii); }
         }
 
 
@@ -111,6 +163,7 @@ namespace Msticky
                 {
                     case Keys.A:
                         this.Opacity = 1.0;
+                        this.freezeToolStripMenuItem.Visible = false;
                         break;
                     case Keys.S:
                         this.Opacity = 0.0;
@@ -123,9 +176,14 @@ namespace Msticky
             {
                 case Keys.A:
                     this.Opacity += 0.2;
+                    if (this.Opacity >= 1.0)
+                    {
+                        this.freezeToolStripMenuItem.Visible = false;
+                    }
                     break;
                 case Keys.S:
                     this.Opacity -= 0.2;
+                    this.freezeToolStripMenuItem.Visible = true;
                     break;
                 case Keys.Right:
                     this.Left += 1;
@@ -268,6 +326,68 @@ namespace Msticky
             {
                 this.Left += e.X - mousePoint.X;
                 this.Top += e.Y - mousePoint.Y;
+            }
+        }
+
+        private Boolean UpdateFreeze()
+        {
+            const int GWL_EXSTYLE = -20;
+            const int WS_EX_TRANSPARENT = 0x00000020;
+            const int WS_EX_LAYERED = 0x00080000;
+
+            int style = (int)GetWindowLong(this.Handle, GWL_EXSTYLE);
+
+            if ((style & WS_EX_LAYERED) != WS_EX_LAYERED)
+                return false;
+
+            if ((style & WS_EX_TRANSPARENT) == WS_EX_TRANSPARENT)
+            {
+                style &= ~WS_EX_TRANSPARENT;
+            }
+            else
+            {
+                style |= WS_EX_TRANSPARENT;
+            }
+            SetWindowLong(this.Handle, GWL_EXSTYLE, (IntPtr)style);
+
+            return true;
+        }
+
+        private void freezeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+
+            if (!UpdateFreeze())
+            {
+                item.Checked = false;
+            }
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_SYSCOMMAND = 0x112;
+
+            long param = 0;
+
+            if (IntPtr.Size == 4)
+            {
+                param = m.WParam.ToInt32();
+            }
+            else if (IntPtr.Size == 8)
+            {
+                param = m.WParam.ToInt64();
+            }
+
+            if (m.Msg == WM_SYSCOMMAND && param == 500)
+            {
+                if (UpdateFreeze())
+                {
+                    freezeToolStripMenuItem.Checked = !freezeToolStripMenuItem.Checked;
+                }
+            }
+            else
+            {
+                base.WndProc(ref m);
             }
         }
     }
