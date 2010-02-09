@@ -88,6 +88,7 @@
             this.Name = "Form1";
             this.Text = "Msticky";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseWheel);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);

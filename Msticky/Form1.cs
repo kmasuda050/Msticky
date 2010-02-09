@@ -16,6 +16,10 @@ namespace Msticky
         private SimplePsd.CPSD psd;
         private Point mousePoint;
         private Size BeforeSize;
+        private Point BeforeLocation;
+        private float zoom;
+        private Boolean doubleClick;
+        private Boolean icon;
 
         public Form1()
         {
@@ -28,6 +32,7 @@ namespace Msticky
             bitmap = null;
             psd = new SimplePsd.CPSD();
             this.TopMost = true;
+            icon = false;
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
@@ -71,9 +76,20 @@ namespace Msticky
 
             if (bitmap != null)
             {
+                zoom = 1.0f;
                 pictureBox1.Image = bitmap;
-                pictureBox1.Size = bitmap.Size;
                 this.ClientSize = bitmap.Size;
+
+                SetPictureBox1Size();
+            }
+        }
+
+        private void SetPictureBox1Size()
+        {
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Width = (int)(pictureBox1.Image.Width * zoom);
+                pictureBox1.Height = (int)(pictureBox1.Image.Height * zoom);
             }
         }
 
@@ -126,6 +142,7 @@ namespace Msticky
                 case Keys.Z:
                     pictureBox1.Left = 0;
                     pictureBox1.Top = 0;
+                    this.ClientSize = pictureBox1.Size;
                     break;
             }
         }
@@ -160,6 +177,25 @@ namespace Msticky
             mouseMove(e);
         }
 
+        private void Form1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            if (e.Delta < 0)
+            {
+                zoom += 0.1f;
+                if (zoom > 3.0f)
+                    zoom = 3.0f;
+            }
+            else
+            {
+                zoom -= 0.1f;
+                if (zoom < 0.2f)
+                    zoom = 0.2f;
+            }
+
+            SetPictureBox1Size();
+        }
+
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             mouseDown(e);
@@ -176,28 +212,41 @@ namespace Msticky
                 return;
 
             mousePoint = new Point(e.X, e.Y);
+            doubleClick = false;
 
             if (e.Clicks == 2)
             {
-                if (this.FormBorderStyle == FormBorderStyle.Sizable)
+                doubleClick = true;
+
+                if (!icon)
                 {
                     BeforeSize = this.ClientSize;
+                    BeforeLocation = pictureBox1.Location;
 
                     this.ClientSize = new Size(32,32);
-                    pictureBox1.Left = 0;
-                    pictureBox1.Top = 0;
+                    pictureBox1.Location = new Point(0, 0);
                     pictureBox1.Size = this.ClientSize;
                     pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                    this.FormBorderStyle = FormBorderStyle.None;
+                    Point p = PointToClient(Location);
+                    Rectangle r = ClientRectangle;
+                    r.Offset(-p.X, -p.Y);
+                    Region = new Region(r);
+
+                    icon = true;
                 }
                 else
                 {
-                    pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
-                    pictureBox1.Size = BeforeSize;
+                    pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+
                     this.ClientSize = BeforeSize;
-                    
-                    this.FormBorderStyle = FormBorderStyle.Sizable;
+                    pictureBox1.Location = BeforeLocation;
+
+                    Region = null;
+
+                    SetPictureBox1Size();
+
+                    icon = false;
                 }
             }
         }
@@ -205,6 +254,9 @@ namespace Msticky
         private void mouseMove(MouseEventArgs e)
         {
             if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
+                return;
+
+            if (doubleClick)
                 return;
 
             if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
