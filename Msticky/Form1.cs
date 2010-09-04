@@ -18,12 +18,14 @@ namespace Msticky
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
 
+        private Bitmap bitmapBase = null;
         private Bitmap bitmap = null;
         private SimplePsd.CPSD psd;
         private Point mousePoint;
         private Size BeforeSize;
         private Point BeforeLocation;
         private float zoom;
+        private float rotate;
         private Boolean doubleClick;
         private Boolean icon;
 
@@ -81,6 +83,7 @@ namespace Msticky
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            bitmapBase = null;
             bitmap = null;
             psd = new SimplePsd.CPSD();
             this.TopMost = true;
@@ -114,21 +117,44 @@ namespace Msticky
             return null;
         }
 
+        private void UpdateBitmap(Bitmap bitmap, Bitmap original)
+        {
+            if (bitmap == null || original == null)
+                return;
+
+            Graphics g = Graphics.FromImage(bitmap);
+            g.Clear(Color.Empty);
+            g.ResetTransform();
+            g.TranslateTransform(bitmapBase.Width / 2, bitmapBase.Height / 2);
+            g.RotateTransform(rotate);
+            g.TranslateTransform(-bitmapBase.Width / 2, -bitmapBase.Height / 2);
+            g.DrawImage(bitmapBase, 0, 0);
+            g.Dispose();
+        }
+
         private void SetImage(String file)
         {
             pictureBox1.Location = new Point(0, 0);
 
+            if (bitmapBase != null)
+            {
+                bitmapBase.Dispose();
+                bitmapBase = null;
+            }
             if (bitmap != null)
             {
                 bitmap.Dispose();
                 bitmap = null;
             }
 
-            bitmap = (file.EndsWith("psd")) ? GetImagePsd(file) : new Bitmap(file);
+            bitmapBase = (file.EndsWith("psd")) ? GetImagePsd(file) : new Bitmap(file);
 
-            if (bitmap != null)
+            if (bitmapBase != null)
             {
                 zoom = 1.0f;
+                rotate = 0.0f;
+                bitmap = new Bitmap(bitmapBase.Width, bitmapBase.Height);
+                UpdateBitmap(bitmap, bitmapBase);
                 pictureBox1.Image = bitmap;
                 this.ClientSize = bitmap.Size;
 
@@ -237,21 +263,39 @@ namespace Msticky
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
         {
-            this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            if (e.Delta < 0)
+            if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
             {
-                zoom += 0.1f;
-                if (zoom > 3.0f)
-                    zoom = 3.0f;
+                if (e.Delta < 0)
+                {
+                    rotate -= 2.0f;
+                }
+                else
+                {
+                    rotate += 2.0f;
+                }
+
+                UpdateBitmap(bitmap, bitmapBase);
+
+                pictureBox1.Invalidate();
             }
             else
             {
-                zoom -= 0.1f;
-                if (zoom < 0.2f)
-                    zoom = 0.2f;
-            }
+                this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                if (e.Delta < 0)
+                {
+                    zoom += 0.1f;
+                    if (zoom > 3.0f)
+                        zoom = 3.0f;
+                }
+                else
+                {
+                    zoom -= 0.1f;
+                    if (zoom < 0.2f)
+                        zoom = 0.2f;
+                }
 
-            SetPictureBox1Size();
+                SetPictureBox1Size();
+            }
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
