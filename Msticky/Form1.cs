@@ -80,6 +80,24 @@ namespace Msticky
             unchecked { InsertMenuItem(hMenu, 0, false, ref mii); }
         }
 
+        private void UpdateHistoryToolStripMenuItem()
+        {
+            if (Properties.Settings.Default.Setting == null)
+                return;
+
+            historyToolStripMenuItem.DropDownItems.Clear();
+
+            for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+            {
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Text = Properties.Settings.Default.Setting[i];
+                historyToolStripMenuItem.DropDownItems.Add(item);
+                item.Click += delegate
+                {
+                    SetImage(item.Text);
+                };
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -88,6 +106,8 @@ namespace Msticky
             psd = new SimplePsd.CPSD();
             this.TopMost = true;
             icon = false;
+
+            UpdateHistoryToolStripMenuItem();
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
@@ -134,6 +154,12 @@ namespace Msticky
 
         private void SetImage(String file)
         {
+            if (!System.IO.File.Exists(file))
+            {
+                MessageBox.Show("file not found :-(");
+                return;
+            }
+
             pictureBox1.Location = new Point(0, 0);
 
             if (bitmapBase != null)
@@ -151,6 +177,30 @@ namespace Msticky
 
             if (bitmapBase != null)
             {
+                bool duplicate = false;
+
+                if (Properties.Settings.Default.Setting == null)
+                    Properties.Settings.Default.Setting = new System.Collections.Specialized.StringCollection();
+                for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+                {
+                    if (Properties.Settings.Default.Setting[i] == file)
+                    {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if (!duplicate)
+                {
+                    Properties.Settings.Default.Setting.Insert(0, file);
+                    if (Properties.Settings.Default.Setting.Count > 10)
+                    {
+                        Properties.Settings.Default.Setting.RemoveAt(10);
+                    }
+                    Properties.Settings.Default.Save();
+
+                    UpdateHistoryToolStripMenuItem();
+                }
+
                 zoom = 1.0f;
                 rotate = 0.0f;
                 bitmap = new Bitmap(bitmapBase.Width, bitmapBase.Height);
