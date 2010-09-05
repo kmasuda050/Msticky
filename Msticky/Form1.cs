@@ -80,6 +80,24 @@ namespace Msticky
             unchecked { InsertMenuItem(hMenu, 0, false, ref mii); }
         }
 
+        private void UpdateHistoryToolStripMenuItem()
+        {
+            if (Properties.Settings.Default.Setting == null)
+                return;
+
+            historyToolStripMenuItem.DropDownItems.Clear();
+
+            for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+            {
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Text = Properties.Settings.Default.Setting[i];
+                historyToolStripMenuItem.DropDownItems.Add(item);
+                item.Click += delegate
+                {
+                    SetImage(item.Text);
+                };
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -89,19 +107,8 @@ namespace Msticky
             this.TopMost = true;
             icon = false;
 
-            if (Properties.Settings.Default.Setting != null)
-            {
-                for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
-                {
-                    ToolStripMenuItem item = new ToolStripMenuItem();
-                    item.Text = Properties.Settings.Default.Setting[i];
-                    historyToolStripMenuItem.DropDownItems.Add(item);
-                    item.Click += delegate
-                    {
-                        SetImage(item.Text);
-                    };
-                }
-            }
+            UpdateHistoryToolStripMenuItem();
+
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
@@ -170,10 +177,29 @@ namespace Msticky
 
             if (bitmapBase != null)
             {
+                bool duplicate = false;
+
                 if (Properties.Settings.Default.Setting == null)
                     Properties.Settings.Default.Setting = new System.Collections.Specialized.StringCollection();
-                Properties.Settings.Default.Setting.Add(file);
-                Properties.Settings.Default.Save();
+                for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+                {
+                    if (Properties.Settings.Default.Setting[i] == file)
+                    {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if (!duplicate)
+                {
+                    Properties.Settings.Default.Setting.Insert(0, file);
+                    if (Properties.Settings.Default.Setting.Count > 10)
+                    {
+                        Properties.Settings.Default.Setting.RemoveAt(10);
+                    }
+                    Properties.Settings.Default.Save();
+
+                    UpdateHistoryToolStripMenuItem();
+                }
 
                 zoom = 1.0f;
                 rotate = 0.0f;
