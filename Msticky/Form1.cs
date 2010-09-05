@@ -147,6 +147,12 @@ namespace Msticky
 
         private void SetImage(String file)
         {
+            if (!System.IO.File.Exists(file))
+            {
+                MessageBox.Show("file not found :-(");
+                return;
+            }
+
             pictureBox1.Location = new Point(0, 0);
 
             if (bitmapBase != null)
