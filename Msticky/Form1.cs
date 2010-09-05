@@ -151,6 +151,11 @@ namespace Msticky
 
             if (bitmapBase != null)
             {
+                if (Properties.Settings.Default.Setting == null)
+                    Properties.Settings.Default.Setting = new System.Collections.Specialized.StringCollection();
+                Properties.Settings.Default.Setting.Add(file);
+                Properties.Settings.Default.Save();
+
                 zoom = 1.0f;
                 rotate = 0.0f;
                 bitmap = new Bitmap(bitmapBase.Width, bitmapBase.Height);
