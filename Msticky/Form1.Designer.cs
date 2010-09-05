@@ -35,6 +35,7 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.freezeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.historyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -46,17 +47,18 @@
             this.pictureBox1.Size = new System.Drawing.Size(100, 50);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
             this.topToolStripMenuItem,
-            this.freezeToolStripMenuItem});
+            this.freezeToolStripMenuItem,
+            this.historyToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 114);
             // 
             // openToolStripMenuItem
             // 
@@ -84,6 +86,12 @@
             this.freezeToolStripMenuItem.Visible = false;
             this.freezeToolStripMenuItem.Click += new System.EventHandler(this.freezeToolStripMenuItem_Click);
             // 
+            // historyToolStripMenuItem
+            // 
+            this.historyToolStripMenuItem.Name = "historyToolStripMenuItem";
+            this.historyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.historyToolStripMenuItem.Text = "History";
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -99,12 +107,12 @@
             this.Name = "Form1";
             this.Text = "Msticky";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseWheel);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
+            this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form1_DragOver);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
-            this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form1_DragOver);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseWheel);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -118,6 +126,7 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem topToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem freezeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem historyToolStripMenuItem;
     }
 }
 

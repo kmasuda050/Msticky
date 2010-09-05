@@ -89,6 +89,19 @@ namespace Msticky
             this.TopMost = true;
             icon = false;
 
+            if (Properties.Settings.Default.Setting != null)
+            {
+                for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem();
+                    item.Text = Properties.Settings.Default.Setting[i];
+                    historyToolStripMenuItem.DropDownItems.Add(item);
+                    item.Click += delegate
+                    {
+                        SetImage(item.Text);
+                    };
+                }
+            }
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
