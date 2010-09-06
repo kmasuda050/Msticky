@@ -233,7 +233,7 @@ namespace Msticky
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control)
+            if (e.Shift)
             {
                 switch (e.KeyCode)
                 {
@@ -243,6 +243,11 @@ namespace Msticky
                         break;
                     case Keys.S:
                         this.Opacity = 0.0;
+                        break;
+                    case Keys.R:
+                        rotate = 0;
+                        UpdateBitmap(bitmap, bitmapBase);
+                        pictureBox1.Invalidate();
                         break;
                 }
                 return;
