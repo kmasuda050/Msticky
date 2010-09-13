@@ -8,6 +8,9 @@ using System.Text;
 using System.Windows.Forms;
 using SimplePsd;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+
+using QTOControlLib;
 
 namespace Msticky
 {
@@ -148,7 +151,7 @@ namespace Msticky
             g.TranslateTransform(bitmapBase.Width / 2, bitmapBase.Height / 2);
             g.RotateTransform(rotate);
             g.TranslateTransform(-bitmapBase.Width / 2, -bitmapBase.Height / 2);
-            g.DrawImage(bitmapBase, 0, 0);
+            g.DrawImage(bitmapBase, 0, 0, bitmapBase.Width, bitmapBase.Height);
             g.Dispose();
         }
 
@@ -173,7 +176,20 @@ namespace Msticky
                 bitmap = null;
             }
 
-            bitmapBase = (file.EndsWith("psd")) ? GetImagePsd(file) : new Bitmap(file);
+            if (file.EndsWith("mov"))
+            {
+                axQTControl1.Visible = true;
+                axQTControl1.Sizing = QTSizingModeEnum.qtControlFitsMovie;
+                axQTControl1.FileName = file;
+                axQTControl1.Sizing = QTSizingModeEnum.qtMovieFitsControlMaintainAspectRatio;
+                this.ClientSize = axQTControl1.Size;
+                axQTControl1.FileName = file;
+            }
+            else
+            {
+                axQTControl1.Visible = false;
+                bitmapBase = (file.EndsWith("psd")) ? GetImagePsd(file) : new Bitmap(file);
+            }
 
             if (bitmapBase != null)
             {
@@ -489,5 +505,11 @@ namespace Msticky
                 base.WndProc(ref m);
             }
         }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            axQTControl1.Size = this.ClientSize;
+        }
+
     }
 }

@@ -36,8 +36,10 @@
             this.topToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.freezeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.historyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.axQTControl1 = new AxQTOControlLib.AxQTControl();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axQTControl1)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -92,6 +94,16 @@
             this.historyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.historyToolStripMenuItem.Text = "History";
             // 
+            // axQTControl1
+            // 
+            this.axQTControl1.Enabled = true;
+            this.axQTControl1.Location = new System.Drawing.Point(0, 0);
+            this.axQTControl1.Name = "axQTControl1";
+            this.axQTControl1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axQTControl1.OcxState")));
+            this.axQTControl1.Size = new System.Drawing.Size(192, 192);
+            this.axQTControl1.TabIndex = 1;
+            this.axQTControl1.Visible = false;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -99,6 +111,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 271);
             this.ContextMenuStrip = this.contextMenuStrip1;
+            this.Controls.Add(this.axQTControl1);
             this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
@@ -113,8 +126,10 @@
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseWheel);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.axQTControl1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -127,6 +142,7 @@
         private System.Windows.Forms.ToolStripMenuItem topToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem freezeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem historyToolStripMenuItem;
+        private AxQTOControlLib.AxQTControl axQTControl1;
     }
 }
 
