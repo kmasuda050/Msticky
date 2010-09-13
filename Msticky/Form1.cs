@@ -519,5 +519,18 @@ namespace Msticky
             this.contextMenuStrip1.Show(this, e.x, e.y);
         }
 
+        private void axQTControl1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Right:
+                    axQTControl1.Movie.StepFwd();
+                    break;
+                case Keys.Left:
+                    axQTControl1.Movie.StepRev();
+                    break;
+            }
+        }
+
     }
 }

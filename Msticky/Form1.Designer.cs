@@ -104,6 +104,7 @@
             this.axQTControl1.TabIndex = 1;
             this.axQTControl1.Visible = false;
             this.axQTControl1.MouseUpEvent += new AxQTOControlLib._IQTControlEvents_MouseUpEventHandler(this.axQTControl1_MouseUpEvent);
+            this.axQTControl1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.axQTControl1_PreviewKeyDown);
             // 
             // Form1
             // 
