@@ -240,7 +240,7 @@ namespace Msticky
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd";
+            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd|Movie(*.mov)|*.mov";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 SetImage(ofd.FileName);
@@ -509,6 +509,14 @@ namespace Msticky
         private void Form1_Resize(object sender, EventArgs e)
         {
             axQTControl1.Size = this.ClientSize;
+        }
+
+        private void axQTControl1_MouseUpEvent(object sender, AxQTOControlLib._IQTControlEvents_MouseUpEvent e)
+        {
+            if (e.button != 2)
+                return;
+
+            this.contextMenuStrip1.Show(this, e.x, e.y);
         }
 
     }

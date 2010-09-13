@@ -103,6 +103,7 @@
             this.axQTControl1.Size = new System.Drawing.Size(192, 192);
             this.axQTControl1.TabIndex = 1;
             this.axQTControl1.Visible = false;
+            this.axQTControl1.MouseUpEvent += new AxQTOControlLib._IQTControlEvents_MouseUpEventHandler(this.axQTControl1_MouseUpEvent);
             // 
             // Form1
             // 
