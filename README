@@ -1,20 +1,23 @@
-Msticky
-  Display Image Tool.
+= Msticky
+ Display Image Tool.
 
-- Download EXE
+== Getting Started
+1. Install QuickTime
+ http://www.apple.com/jp/quicktime/download/
+2. Download Msticky
  http://dl.dropbox.com/u/354108/Msticky/Msticky.zip
+3. Unzip Msticky.zip
+4. Run Msticky.exe
 
-
-- platform:
+== Platform:
  Windows
 
-- openable file type:
- *.bmp *.png *.jpeg *.gif *.psd
+== openable file type:
+ *.bmp *.png *.jpeg *.gif *.psd *.mov
 
+== Develop
+ Visual C# 2010 Express Edition
 
-- develop
- Visual C# 2008 Express Edition
-
-- third library:
+== Third library
  SimplePsd
  http://www.codeproject.com/KB/graphics/simplepsd.aspx
