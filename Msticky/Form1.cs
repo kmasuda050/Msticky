@@ -352,7 +352,7 @@ namespace Msticky
             else
             {
                 this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-                if (e.Delta < 0)
+                if (e.Delta > 0)
                 {
                     zoom += 0.1f;
                     if (zoom > 3.0f)
