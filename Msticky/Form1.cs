@@ -351,21 +351,34 @@ namespace Msticky
             }
             else
             {
+                bool adjust = true;
                 this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                 if (e.Delta > 0)
                 {
                     zoom += 0.1f;
                     if (zoom > 3.0f)
+                    {
                         zoom = 3.0f;
+                        adjust = false;
+                    }
                 }
                 else
                 {
                     zoom -= 0.1f;
                     if (zoom < 0.2f)
+                    {
                         zoom = 0.2f;
+                        adjust = false;
+                    }
                 }
 
                 SetPictureBox1Size();
+                if (adjust)
+                {
+                    int sign = (e.Delta > 0) ? -1 : 1;
+                    this.pictureBox1.Left += sign * (int)(e.X * 0.1f);
+                    this.pictureBox1.Top += sign * (int)(e.Y * 0.1f);
+                }
             }
         }
 
