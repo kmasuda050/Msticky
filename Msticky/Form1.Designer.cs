@@ -33,13 +33,21 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.historyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.freezeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.historyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.axQTControl1 = new AxQTOControlLib.AxQTControl();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.mopenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mhistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mhelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axQTControl1)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -55,12 +63,14 @@
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
             this.topToolStripMenuItem,
+            this.openToolStripMenuItem,
+            this.historyToolStripMenuItem,
             this.freezeToolStripMenuItem,
-            this.historyToolStripMenuItem});
+            this.showMenuToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 158);
             // 
             // openToolStripMenuItem
             // 
@@ -68,6 +78,12 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open File";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // historyToolStripMenuItem
+            // 
+            this.historyToolStripMenuItem.Name = "historyToolStripMenuItem";
+            this.historyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.historyToolStripMenuItem.Text = "History";
             // 
             // topToolStripMenuItem
             // 
@@ -88,11 +104,20 @@
             this.freezeToolStripMenuItem.Visible = false;
             this.freezeToolStripMenuItem.Click += new System.EventHandler(this.freezeToolStripMenuItem_Click);
             // 
-            // historyToolStripMenuItem
+            // showMenuToolStripMenuItem
             // 
-            this.historyToolStripMenuItem.Name = "historyToolStripMenuItem";
-            this.historyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.historyToolStripMenuItem.Text = "History";
+            this.showMenuToolStripMenuItem.Name = "showMenuToolStripMenuItem";
+            this.showMenuToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showMenuToolStripMenuItem.Text = "Show Menu";
+            this.showMenuToolStripMenuItem.Visible = false;
+            this.showMenuToolStripMenuItem.Click += new System.EventHandler(this.showMenuToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.helpToolStripMenuItem.Text = "Help";
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // axQTControl1
             // 
@@ -106,17 +131,59 @@
             this.axQTControl1.MouseUpEvent += new AxQTOControlLib._IQTControlEvents_MouseUpEventHandler(this.axQTControl1_MouseUpEvent);
             this.axQTControl1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.axQTControl1_PreviewKeyDown);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mopenToolStripMenuItem,
+            this.mhistoryToolStripMenuItem,
+            this.hideMenuToolStripMenuItem,
+            this.mhelpToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(327, 26);
+            this.menuStrip1.TabIndex = 2;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // mopenToolStripMenuItem
+            // 
+            this.mopenToolStripMenuItem.Name = "mopenToolStripMenuItem";
+            this.mopenToolStripMenuItem.Size = new System.Drawing.Size(74, 22);
+            this.mopenToolStripMenuItem.Text = "Open File";
+            this.mopenToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // mhistoryToolStripMenuItem
+            // 
+            this.mhistoryToolStripMenuItem.Name = "mhistoryToolStripMenuItem";
+            this.mhistoryToolStripMenuItem.Size = new System.Drawing.Size(62, 22);
+            this.mhistoryToolStripMenuItem.Text = "History";
+            // 
+            // hideMenuToolStripMenuItem
+            // 
+            this.hideMenuToolStripMenuItem.Name = "hideMenuToolStripMenuItem";
+            this.hideMenuToolStripMenuItem.Size = new System.Drawing.Size(81, 22);
+            this.hideMenuToolStripMenuItem.Text = "Hide Menu";
+            this.hideMenuToolStripMenuItem.Click += new System.EventHandler(this.hideMenuToolStripMenuItem_Click);
+            // 
+            // mhelpToolStripMenuItem
+            // 
+            this.mhelpToolStripMenuItem.Name = "mhelpToolStripMenuItem";
+            this.mhelpToolStripMenuItem.Size = new System.Drawing.Size(46, 22);
+            this.mhelpToolStripMenuItem.Text = "Help";
+            this.mhelpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 271);
+            this.ClientSize = new System.Drawing.Size(327, 276);
             this.ContextMenuStrip = this.contextMenuStrip1;
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.axQTControl1);
             this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
@@ -132,7 +199,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.axQTControl1)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -145,6 +215,13 @@
         private System.Windows.Forms.ToolStripMenuItem freezeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem historyToolStripMenuItem;
         private AxQTOControlLib.AxQTControl axQTControl1;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem mopenToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mhistoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideMenuToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showMenuToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mhelpToolStripMenuItem;
     }
 }
 

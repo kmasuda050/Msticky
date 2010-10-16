@@ -27,10 +27,11 @@ namespace Msticky
         private Point mousePoint;
         private Size BeforeSize;
         private Point BeforeLocation;
-        private float zoom;
+        private int zoom;
         private float rotate;
         private Boolean doubleClick;
         private Boolean icon;
+        private Boolean hide;
 
         [DllImport("user32.dll")]
         private static extern bool InsertMenuItem(IntPtr hMenu, UInt32 uItem, bool fByPosition, ref MENUITEMINFO mii);
@@ -88,17 +89,22 @@ namespace Msticky
             if (Properties.Settings.Default.Setting == null)
                 return;
 
-            historyToolStripMenuItem.DropDownItems.Clear();
+            ToolStripMenuItem[] histories = { historyToolStripMenuItem, mhistoryToolStripMenuItem };
 
-            for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+            foreach (ToolStripMenuItem history in histories)
             {
-                ToolStripMenuItem item = new ToolStripMenuItem();
-                item.Text = Properties.Settings.Default.Setting[i];
-                historyToolStripMenuItem.DropDownItems.Add(item);
-                item.Click += delegate
+                history.DropDownItems.Clear();
+
+                for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
                 {
-                    SetImage(item.Text);
-                };
+                    ToolStripMenuItem item = new ToolStripMenuItem();
+                    item.Text = Properties.Settings.Default.Setting[i];
+                    history.DropDownItems.Add(item);
+                    item.Click += delegate
+                    {
+                        SetImage(item.Text);
+                    };
+                }
             }
         }
 
@@ -109,7 +115,9 @@ namespace Msticky
             psd = new SimplePsd.CPSD();
             this.TopMost = true;
             icon = false;
+            hide = false;
 
+            setMenuVisible(Properties.Settings.Default.MenuVisible);
             UpdateHistoryToolStripMenuItem();
 
             string[] args = Environment.GetCommandLineArgs();
@@ -217,7 +225,7 @@ namespace Msticky
                     UpdateHistoryToolStripMenuItem();
                 }
 
-                zoom = 1.0f;
+                zoom = 10;
                 rotate = 0.0f;
                 bitmap = new Bitmap(bitmapBase.Width, bitmapBase.Height);
                 UpdateBitmap(bitmap, bitmapBase);
@@ -232,8 +240,8 @@ namespace Msticky
         {
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Width = (int)(pictureBox1.Image.Width * zoom);
-                pictureBox1.Height = (int)(pictureBox1.Image.Height * zoom);
+                pictureBox1.Width = (int)(pictureBox1.Image.Width * zoom * 0.1f );
+                pictureBox1.Height = (int)(pictureBox1.Image.Height * zoom * 0.1f );
             }
         }
 
@@ -295,6 +303,8 @@ namespace Msticky
                     this.Top += 1;
                     break;
                 case Keys.Z:
+                    this.Top += pictureBox1.Top;
+                    this.Left += pictureBox1.Left;
                     pictureBox1.Left = 0;
                     pictureBox1.Top = 0;
                     this.ClientSize = pictureBox1.Size;
@@ -352,22 +362,23 @@ namespace Msticky
             else
             {
                 bool adjust = true;
+                int beforeZoom = zoom;
                 this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                 if (e.Delta > 0)
                 {
-                    zoom += 0.1f;
-                    if (zoom > 3.0f)
+                    zoom += 1;
+                    if (zoom > 30)
                     {
-                        zoom = 3.0f;
+                        zoom = 30;
                         adjust = false;
                     }
                 }
                 else
                 {
-                    zoom -= 0.1f;
-                    if (zoom < 0.2f)
+                    zoom -= 1;
+                    if (zoom < 2)
                     {
-                        zoom = 0.2f;
+                        zoom = 2;
                         adjust = false;
                     }
                 }
@@ -375,9 +386,11 @@ namespace Msticky
                 SetPictureBox1Size();
                 if (adjust)
                 {
-                    int sign = (e.Delta > 0) ? -1 : 1;
-                    this.pictureBox1.Left += sign * (int)(e.X * 0.1f);
-                    this.pictureBox1.Top += sign * (int)(e.Y * 0.1f);
+                    int x = e.X - pictureBox1.Left;
+                    int y = e.Y - pictureBox1.Top;
+
+                    this.pictureBox1.Left -= (int)Math.Floor(x * ((float)zoom / beforeZoom - 1 ));
+                    this.pictureBox1.Top -= (int)Math.Floor(y * ((float)zoom / beforeZoom - 1));
                 }
             }
         }
@@ -420,6 +433,9 @@ namespace Msticky
                     Region = new Region(r);
 
                     icon = true;
+
+                    hide = menuStrip1.Visible;
+                    setMenuVisible(false);
                 }
                 else
                 {
@@ -433,6 +449,7 @@ namespace Msticky
                     SetPictureBox1Size();
 
                     icon = false;
+                    setMenuVisible(hide);
                 }
             }
         }
@@ -545,5 +562,33 @@ namespace Msticky
             }
         }
 
+        private void hideMenuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setMenuVisible(false);
+            saveMenuVisible();
+        }
+
+        private void showMenuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setMenuVisible(true);
+            saveMenuVisible();
+        }
+
+        private void saveMenuVisible()
+        {
+            Properties.Settings.Default.MenuVisible = menuStrip1.Visible;
+            Properties.Settings.Default.Save();
+        }
+
+        private void setMenuVisible(Boolean visible)
+        {
+            menuStrip1.Visible = visible;
+            showMenuToolStripMenuItem.Visible = !visible;
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://mononoco.hobby-site.org/pukiwiki/index.php?Msticky");
+        }
     }
 }
