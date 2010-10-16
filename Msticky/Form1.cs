@@ -32,6 +32,7 @@ namespace Msticky
         private Boolean doubleClick;
         private Boolean icon;
         private Boolean hide;
+        private String title;
 
         [DllImport("user32.dll")]
         private static extern bool InsertMenuItem(IntPtr hMenu, UInt32 uItem, bool fByPosition, ref MENUITEMINFO mii);
@@ -84,6 +85,11 @@ namespace Msticky
             unchecked { InsertMenuItem(hMenu, 0, false, ref mii); }
         }
 
+        private void UpdateTitle()
+        {
+            this.Text = title + " @ " + zoom * 10 + "%";
+        }
+
         private void UpdateHistoryToolStripMenuItem()
         {
             if (Properties.Settings.Default.Setting == null)
@@ -116,6 +122,7 @@ namespace Msticky
             this.TopMost = true;
             icon = false;
             hide = false;
+            title = "Msticky";
 
             setMenuVisible(Properties.Settings.Default.MenuVisible);
             UpdateHistoryToolStripMenuItem();
@@ -183,6 +190,7 @@ namespace Msticky
                 bitmap.Dispose();
                 bitmap = null;
             }
+            title = "Msticky";
 
             if (file.EndsWith("mov"))
             {
@@ -192,6 +200,7 @@ namespace Msticky
                 axQTControl1.Sizing = QTSizingModeEnum.qtMovieFitsControlMaintainAspectRatio;
                 this.ClientSize = axQTControl1.Size;
                 axQTControl1.FileName = file;
+                title = System.IO.Path.GetFileName(file);
             }
             else
             {
@@ -232,8 +241,11 @@ namespace Msticky
                 pictureBox1.Image = bitmap;
                 this.ClientSize = bitmap.Size;
 
+                title = System.IO.Path.GetFileName(file);
                 SetPictureBox1Size();
             }
+
+            UpdateTitle();
         }
 
         private void SetPictureBox1Size()
@@ -384,6 +396,7 @@ namespace Msticky
                 }
 
                 SetPictureBox1Size();
+                UpdateTitle();
                 if (adjust)
                 {
                     int x = e.X - pictureBox1.Left;
