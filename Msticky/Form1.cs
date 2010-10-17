@@ -123,6 +123,7 @@ namespace Msticky
             icon = false;
             hide = false;
             title = "Msticky";
+            zoom = 10;
 
             setMenuVisible(Properties.Settings.Default.MenuVisible);
             UpdateHistoryToolStripMenuItem();
@@ -274,16 +275,13 @@ namespace Msticky
                 switch (e.KeyCode)
                 {
                     case Keys.A:
-                        this.Opacity = 1.0;
-                        this.freezeToolStripMenuItem.Visible = false;
+                        UpdateOpacity(1.0);
                         break;
                     case Keys.S:
-                        this.Opacity = 0.0;
+                        UpdateOpacity(0.0);
                         break;
                     case Keys.R:
-                        rotate = 0;
-                        UpdateBitmap(bitmap, bitmapBase);
-                        pictureBox1.Invalidate();
+                        resetRotation();
                         break;
                 }
                 return;
@@ -292,15 +290,10 @@ namespace Msticky
             switch (e.KeyCode)
             {
                 case Keys.A:
-                    this.Opacity += 0.2;
-                    if (this.Opacity >= 1.0)
-                    {
-                        this.freezeToolStripMenuItem.Visible = false;
-                    }
+                    UpdateOpacity(this.Opacity + 0.2);
                     break;
                 case Keys.S:
-                    this.Opacity -= 0.2;
-                    this.freezeToolStripMenuItem.Visible = true;
+                    UpdateOpacity(this.Opacity - 0.2);
                     break;
                 case Keys.Right:
                     this.Left += 1;
@@ -315,11 +308,19 @@ namespace Msticky
                     this.Top += 1;
                     break;
                 case Keys.Z:
-                    this.Top += pictureBox1.Top;
-                    this.Left += pictureBox1.Left;
-                    pictureBox1.Left = 0;
-                    pictureBox1.Top = 0;
-                    this.ClientSize = pictureBox1.Size;
+                    fit();
+                    break;
+                case Keys.C:
+                    UpdateZoom(false, 0, 0);
+                    break;
+                case Keys.X:
+                    UpdateZoom(true, 0, 0);
+                    break;
+                case Keys.W:
+                    UpdateRotate(true);
+                    break;
+                case Keys.E:
+                    UpdateRotate(false);
                     break;
             }
         }
@@ -327,6 +328,8 @@ namespace Msticky
         private void topToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.TopMost = !this.TopMost;
+            this.topToolStripMenuItem.Checked = this.TopMost;
+            this.topToolStripMenuItem1.Checked = this.TopMost;
         }
 
         // http://www.atmarkit.co.jp/fdotnet/dotnettips/676dragdrop/dragdrop.html
@@ -358,53 +361,11 @@ namespace Msticky
         {
             if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
             {
-                if (e.Delta < 0)
-                {
-                    rotate -= 2.0f;
-                }
-                else
-                {
-                    rotate += 2.0f;
-                }
-
-                UpdateBitmap(bitmap, bitmapBase);
-
-                pictureBox1.Invalidate();
+                UpdateRotate(e.Delta >= 0);
             }
             else
             {
-                bool adjust = true;
-                int beforeZoom = zoom;
-                this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-                if (e.Delta > 0)
-                {
-                    zoom += 1;
-                    if (zoom > 30)
-                    {
-                        zoom = 30;
-                        adjust = false;
-                    }
-                }
-                else
-                {
-                    zoom -= 1;
-                    if (zoom < 2)
-                    {
-                        zoom = 2;
-                        adjust = false;
-                    }
-                }
-
-                SetPictureBox1Size();
-                UpdateTitle();
-                if (adjust)
-                {
-                    int x = e.X - pictureBox1.Left;
-                    int y = e.Y - pictureBox1.Top;
-
-                    this.pictureBox1.Left -= (int)Math.Floor(x * ((float)zoom / beforeZoom - 1 ));
-                    this.pictureBox1.Top -= (int)Math.Floor(y * ((float)zoom / beforeZoom - 1));
-                }
+                UpdateZoom(e.Delta > 0, e.X, e.Y);
             }
         }
 
@@ -430,40 +391,7 @@ namespace Msticky
             {
                 doubleClick = true;
 
-                if (!icon)
-                {
-                    BeforeSize = this.ClientSize;
-                    BeforeLocation = pictureBox1.Location;
-
-                    this.ClientSize = new Size(32,32);
-                    pictureBox1.Location = new Point(0, 0);
-                    pictureBox1.Size = this.ClientSize;
-                    pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-
-                    Point p = PointToClient(Location);
-                    Rectangle r = ClientRectangle;
-                    r.Offset(-p.X, -p.Y);
-                    Region = new Region(r);
-
-                    icon = true;
-
-                    hide = menuStrip1.Visible;
-                    setMenuVisible(false);
-                }
-                else
-                {
-                    pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-
-                    this.ClientSize = BeforeSize;
-                    pictureBox1.Location = BeforeLocation;
-
-                    Region = null;
-
-                    SetPictureBox1Size();
-
-                    icon = false;
-                    setMenuVisible(hide);
-                }
+                iconize();
             }
         }
 
@@ -513,12 +441,7 @@ namespace Msticky
 
         private void freezeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem item = (ToolStripMenuItem)sender;
-
-            if (!UpdateFreeze())
-            {
-                item.Checked = false;
-            }
+            UpdateFreeze();
         }
 
         protected override void WndProc(ref Message m)
@@ -538,10 +461,7 @@ namespace Msticky
 
             if (m.Msg == WM_SYSCOMMAND && param == 500)
             {
-                if (UpdateFreeze())
-                {
-                    freezeToolStripMenuItem.Checked = !freezeToolStripMenuItem.Checked;
-                }
+                UpdateFreeze();
             }
             else
             {
@@ -603,5 +523,228 @@ namespace Msticky
         {
             System.Diagnostics.Process.Start("http://mononoco.hobby-site.org/pukiwiki/index.php?Msticky");
         }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void UpdateOpacity(double value)
+        {
+            this.Opacity = value;
+            if (value >= 1.0)
+            {
+                this.freezeToolStripMenuItem.Visible = false;
+                this.freezeToolStripMenuItem1.Visible = false;
+            }
+            else
+            {
+                this.freezeToolStripMenuItem.Visible = true;
+                this.freezeToolStripMenuItem1.Visible = true;
+            }
+        }
+
+        private void UpdateZoom(Boolean zoomIn, int mouseX, int mouseY)
+        {
+            bool adjust = true;
+            int beforeZoom = zoom;
+            this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            if (zoomIn)
+            {
+                zoom += 1;
+                if (zoom > 30)
+                {
+                    zoom = 30;
+                    adjust = false;
+                }
+            }
+            else
+            {
+                zoom -= 1;
+                if (zoom < 2)
+                {
+                    zoom = 2;
+                    adjust = false;
+                }
+            }
+
+            SetPictureBox1Size();
+            UpdateTitle();
+
+            if (adjust)
+            {
+                int x = mouseX - pictureBox1.Left;
+                int y = mouseY - pictureBox1.Top;
+
+                this.pictureBox1.Left -= (int)Math.Floor(x * ((float)zoom / beforeZoom - 1));
+                this.pictureBox1.Top -= (int)Math.Floor(y * ((float)zoom / beforeZoom - 1));
+            }
+        }
+
+        private void fit()
+        {
+            this.Top += pictureBox1.Top;
+            this.Left += pictureBox1.Left;
+            pictureBox1.Left = 0;
+            pictureBox1.Top = 0;
+            this.ClientSize = pictureBox1.Size;
+        }
+
+        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateZoom(true, 0, 0);
+        }
+
+        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateZoom(false, 0, 0);
+        }
+
+        private void fitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fit();
+        }
+
+        private void increaseOpacityToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateOpacity(this.Opacity + 0.2);
+        }
+
+        private void decreaseOpacityToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateOpacity(this.Opacity - 0.2);
+        }
+
+        private void opacityMaxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateOpacity(1.0);
+        }
+
+        private void opacityMinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateOpacity(0.0);
+        }
+
+        private void resetRotation()
+        {
+            rotate = 0;
+            UpdateBitmap(bitmap, bitmapBase);
+            pictureBox1.Invalidate();
+        }
+
+        private void resetRotationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            resetRotation();
+        }
+
+        private void UpdateRotate(Boolean cw)
+        {
+            if (cw)
+            {
+                rotate += 2.0f;
+            }
+            else
+            {
+                rotate -= 2.0f;
+            }
+
+            UpdateBitmap(bitmap, bitmapBase);
+
+            pictureBox1.Invalidate();
+        }
+
+        private void cWToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateRotate(true);
+        }
+
+        private void cCWToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateRotate(false);
+        }
+
+        private void iconize()
+        {
+            if (!icon)
+            {
+                BeforeSize = this.ClientSize;
+                BeforeLocation = pictureBox1.Location;
+
+                this.ClientSize = new Size(32, 32);
+                pictureBox1.Location = new Point(0, 0);
+                pictureBox1.Size = this.ClientSize;
+                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                Point p = PointToClient(Location);
+                Rectangle r = ClientRectangle;
+                r.Offset(-p.X, -p.Y);
+                Region = new Region(r);
+
+                icon = true;
+
+                hide = menuStrip1.Visible;
+                setMenuVisible(false);
+            }
+            else
+            {
+                pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+
+                this.ClientSize = BeforeSize;
+                pictureBox1.Location = BeforeLocation;
+
+                Region = null;
+
+                SetPictureBox1Size();
+
+                icon = false;
+                setMenuVisible(hide);
+            }
+        }
+
+        private void iconizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            iconize();
+        }
+
+        private void moveWindowLeftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Left -= 1;
+        }
+
+        private void moveWindowRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Left += 1;
+        }
+
+        private void moveWindowUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Top -= 1;
+        }
+
+        private void moveWindowDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Top += 1;
+        }
+
+        private void moveImageLeftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Left -= 1;
+        }
+
+        private void moveImageRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Left += 1;
+        }
+
+        private void moveImageUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Top -= 1;
+        }
+
+        private void moveImageDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Top += 1;
+        }
+
     }
 }
