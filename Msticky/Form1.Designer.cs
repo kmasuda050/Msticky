@@ -108,28 +108,28 @@
             this.topToolStripMenuItem.Checked = true;
             this.topToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.topToolStripMenuItem.Name = "topToolStripMenuItem";
-            this.topToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.topToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.topToolStripMenuItem.Text = "Top";
             this.topToolStripMenuItem.Click += new System.EventHandler(this.topToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.openToolStripMenuItem.Text = "Open File";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // historyToolStripMenuItem
             // 
             this.historyToolStripMenuItem.Name = "historyToolStripMenuItem";
-            this.historyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.historyToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.historyToolStripMenuItem.Text = "History";
             // 
             // freezeToolStripMenuItem
             // 
             this.freezeToolStripMenuItem.CheckOnClick = true;
             this.freezeToolStripMenuItem.Name = "freezeToolStripMenuItem";
-            this.freezeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.freezeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.freezeToolStripMenuItem.Text = "Freeze";
             this.freezeToolStripMenuItem.Visible = false;
             this.freezeToolStripMenuItem.Click += new System.EventHandler(this.freezeToolStripMenuItem_Click);
@@ -137,7 +137,7 @@
             // showMenuToolStripMenuItem
             // 
             this.showMenuToolStripMenuItem.Name = "showMenuToolStripMenuItem";
-            this.showMenuToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showMenuToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.showMenuToolStripMenuItem.Text = "Show Menu";
             this.showMenuToolStripMenuItem.Visible = false;
             this.showMenuToolStripMenuItem.Click += new System.EventHandler(this.showMenuToolStripMenuItem_Click);
@@ -145,7 +145,7 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
@@ -236,6 +236,7 @@
             // 
             // zoomInToolStripMenuItem
             // 
+            this.zoomInToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
             this.zoomInToolStripMenuItem.ShortcutKeyDisplayString = "X";
             this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
@@ -244,6 +245,7 @@
             // 
             // zoomOutToolStripMenuItem
             // 
+            this.zoomOutToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
             this.zoomOutToolStripMenuItem.ShortcutKeyDisplayString = "C";
             this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
@@ -302,6 +304,7 @@
             // 
             // cWToolStripMenuItem
             // 
+            this.cWToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.cWToolStripMenuItem.Name = "cWToolStripMenuItem";
             this.cWToolStripMenuItem.ShortcutKeyDisplayString = "W";
             this.cWToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
@@ -311,6 +314,7 @@
             // 
             // cCWToolStripMenuItem
             // 
+            this.cCWToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.cCWToolStripMenuItem.Name = "cCWToolStripMenuItem";
             this.cCWToolStripMenuItem.ShortcutKeyDisplayString = "R";
             this.cCWToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
@@ -333,6 +337,7 @@
             // 
             // iconizeToolStripMenuItem
             // 
+            this.iconizeToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.iconizeToolStripMenuItem.Name = "iconizeToolStripMenuItem";
             this.iconizeToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.iconizeToolStripMenuItem.Text = "Iconize";
@@ -418,6 +423,7 @@
             // 
             // moveImageLeftToolStripMenuItem
             // 
+            this.moveImageLeftToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageLeftToolStripMenuItem.Name = "moveImageLeftToolStripMenuItem";
             this.moveImageLeftToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Left)));
             this.moveImageLeftToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
@@ -426,6 +432,7 @@
             // 
             // moveImageRightToolStripMenuItem
             // 
+            this.moveImageRightToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageRightToolStripMenuItem.Name = "moveImageRightToolStripMenuItem";
             this.moveImageRightToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Right)));
             this.moveImageRightToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
@@ -434,6 +441,7 @@
             // 
             // moveImageUpToolStripMenuItem
             // 
+            this.moveImageUpToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageUpToolStripMenuItem.Name = "moveImageUpToolStripMenuItem";
             this.moveImageUpToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up)));
             this.moveImageUpToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
@@ -442,6 +450,7 @@
             // 
             // moveImageDownToolStripMenuItem
             // 
+            this.moveImageDownToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageDownToolStripMenuItem.Name = "moveImageDownToolStripMenuItem";
             this.moveImageDownToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down)));
             this.moveImageDownToolStripMenuItem.Size = new System.Drawing.Size(258, 22);

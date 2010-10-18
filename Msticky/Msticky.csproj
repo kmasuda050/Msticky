@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Msticky.ico" />
+    <None Include="Resources\Image1.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="AxQTOControlLib">
