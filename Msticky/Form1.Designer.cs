@@ -127,7 +127,6 @@
             // 
             // freezeToolStripMenuItem
             // 
-            this.freezeToolStripMenuItem.CheckOnClick = true;
             this.freezeToolStripMenuItem.Name = "freezeToolStripMenuItem";
             this.freezeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.freezeToolStripMenuItem.Text = "Freeze";
@@ -158,7 +157,9 @@
             this.axQTControl1.Size = new System.Drawing.Size(192, 192);
             this.axQTControl1.TabIndex = 1;
             this.axQTControl1.Visible = false;
+            this.axQTControl1.MouseDownEvent += new AxQTOControlLib._IQTControlEvents_MouseDownEventHandler(this.axQTControl1_MouseDownEvent);
             this.axQTControl1.MouseUpEvent += new AxQTOControlLib._IQTControlEvents_MouseUpEventHandler(this.axQTControl1_MouseUpEvent);
+            this.axQTControl1.MouseMoveEvent += new AxQTOControlLib._IQTControlEvents_MouseMoveEventHandler(this.axQTControl1_MouseMoveEvent);
             this.axQTControl1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.axQTControl1_PreviewKeyDown);
             // 
             // menuStrip1
@@ -423,7 +424,6 @@
             // 
             // moveImageLeftToolStripMenuItem
             // 
-            this.moveImageLeftToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageLeftToolStripMenuItem.Name = "moveImageLeftToolStripMenuItem";
             this.moveImageLeftToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Left)));
             this.moveImageLeftToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
@@ -432,7 +432,6 @@
             // 
             // moveImageRightToolStripMenuItem
             // 
-            this.moveImageRightToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageRightToolStripMenuItem.Name = "moveImageRightToolStripMenuItem";
             this.moveImageRightToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Right)));
             this.moveImageRightToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
@@ -441,7 +440,6 @@
             // 
             // moveImageUpToolStripMenuItem
             // 
-            this.moveImageUpToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageUpToolStripMenuItem.Name = "moveImageUpToolStripMenuItem";
             this.moveImageUpToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up)));
             this.moveImageUpToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
@@ -450,7 +448,6 @@
             // 
             // moveImageDownToolStripMenuItem
             // 
-            this.moveImageDownToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.moveImageDownToolStripMenuItem.Name = "moveImageDownToolStripMenuItem";
             this.moveImageDownToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down)));
             this.moveImageDownToolStripMenuItem.Size = new System.Drawing.Size(258, 22);

@@ -33,6 +33,7 @@ namespace Msticky
         private Boolean icon;
         private Boolean hide;
         private String title;
+        private Size movieMargin;
 
         [DllImport("user32.dll")]
         private static extern bool InsertMenuItem(IntPtr hMenu, UInt32 uItem, bool fByPosition, ref MENUITEMINFO mii);
@@ -90,6 +91,33 @@ namespace Msticky
             this.Text = title + " @ " + zoom * 10 + "%";
         }
 
+        private void AddHistory(String file)
+        {
+            bool duplicate = false;
+
+            if (Properties.Settings.Default.Setting == null)
+                Properties.Settings.Default.Setting = new System.Collections.Specialized.StringCollection();
+            for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+            {
+                if (Properties.Settings.Default.Setting[i] == file)
+                {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate)
+            {
+                Properties.Settings.Default.Setting.Insert(0, file);
+                if (Properties.Settings.Default.Setting.Count > 10)
+                {
+                    Properties.Settings.Default.Setting.RemoveAt(10);
+                }
+                Properties.Settings.Default.Save();
+
+                UpdateHistoryToolStripMenuItem();
+            }
+        }
+
         private void UpdateHistoryToolStripMenuItem()
         {
             if (Properties.Settings.Default.Setting == null)
@@ -125,6 +153,10 @@ namespace Msticky
             title = "Msticky";
             zoom = 10;
 
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            
             setMenuVisible(Properties.Settings.Default.MenuVisible);
             UpdateHistoryToolStripMenuItem();
 
@@ -191,59 +223,44 @@ namespace Msticky
                 bitmap.Dispose();
                 bitmap = null;
             }
+            pictureBox1.Image = null;
+            zoom = 10;
+            rotate = 0.0f;
+
             title = "Msticky";
 
             if (file.EndsWith("mov"))
             {
                 axQTControl1.Visible = true;
+                axQTControl1.SetScale(1);
                 axQTControl1.Sizing = QTSizingModeEnum.qtControlFitsMovie;
                 axQTControl1.FileName = file;
-                axQTControl1.Sizing = QTSizingModeEnum.qtMovieFitsControlMaintainAspectRatio;
+                axQTControl1.Sizing = QTSizingModeEnum.qtManualSizing;
                 this.ClientSize = axQTControl1.Size;
                 axQTControl1.FileName = file;
                 title = System.IO.Path.GetFileName(file);
+
+                movieMargin = new Size(axQTControl1.Width - axQTControl1.Movie.Width, axQTControl1.Height - axQTControl1.Movie.Height);
+
+                AddHistory(file);
             }
             else
             {
                 axQTControl1.Visible = false;
                 bitmapBase = (file.EndsWith("psd")) ? GetImagePsd(file) : new Bitmap(file);
-            }
 
-            if (bitmapBase != null)
-            {
-                bool duplicate = false;
-
-                if (Properties.Settings.Default.Setting == null)
-                    Properties.Settings.Default.Setting = new System.Collections.Specialized.StringCollection();
-                for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
+                if (bitmapBase != null)
                 {
-                    if (Properties.Settings.Default.Setting[i] == file)
-                    {
-                        duplicate = true;
-                        break;
-                    }
+                    AddHistory(file);
+
+                    bitmap = new Bitmap(bitmapBase.Width, bitmapBase.Height);
+                    UpdateBitmap(bitmap, bitmapBase);
+                    pictureBox1.Image = bitmap;
+                    this.ClientSize = bitmap.Size;
+
+                    title = System.IO.Path.GetFileName(file);
+                    SetPictureBox1Size();
                 }
-                if (!duplicate)
-                {
-                    Properties.Settings.Default.Setting.Insert(0, file);
-                    if (Properties.Settings.Default.Setting.Count > 10)
-                    {
-                        Properties.Settings.Default.Setting.RemoveAt(10);
-                    }
-                    Properties.Settings.Default.Save();
-
-                    UpdateHistoryToolStripMenuItem();
-                }
-
-                zoom = 10;
-                rotate = 0.0f;
-                bitmap = new Bitmap(bitmapBase.Width, bitmapBase.Height);
-                UpdateBitmap(bitmap, bitmapBase);
-                pictureBox1.Image = bitmap;
-                this.ClientSize = bitmap.Size;
-
-                title = System.IO.Path.GetFileName(file);
-                SetPictureBox1Size();
             }
 
             UpdateTitle();
@@ -253,8 +270,13 @@ namespace Msticky
         {
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Width = (int)(pictureBox1.Image.Width * zoom * 0.1f );
-                pictureBox1.Height = (int)(pictureBox1.Image.Height * zoom * 0.1f );
+                pictureBox1.Width = (int)(pictureBox1.Image.Width * zoom * 0.1f);
+                pictureBox1.Height = (int)(pictureBox1.Image.Height * zoom * 0.1f);
+            }
+
+            if (axQTControl1.Visible)
+            {
+                axQTControl1.SetScale(zoom * 0.1f);
             }
         }
 
@@ -349,12 +371,18 @@ namespace Msticky
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
-            mouseDown(e);
+            if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
+                return;
+
+            mouseDown(e.X, e.Y, e.Clicks);
         }
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
-            mouseMove(e);
+            if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
+                return;
+
+            mouseMove(e.X, e.Y);
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
@@ -371,23 +399,26 @@ namespace Msticky
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            mouseDown(e);
+            if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
+                return;
+
+            mouseDown(e.X, e.Y, e.Clicks);
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            mouseMove(e);
-        }
-
-        private void mouseDown(MouseEventArgs e)
-        {
             if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
                 return;
 
-            mousePoint = new Point(e.X, e.Y);
+            mouseMove(e.X, e.Y);
+        }
+
+        private void mouseDown(int x, int y, int clicks)
+        {
+            mousePoint = new Point(x, y);
             doubleClick = false;
 
-            if (e.Clicks == 2)
+            if (clicks == 2)
             {
                 doubleClick = true;
 
@@ -395,23 +426,20 @@ namespace Msticky
             }
         }
 
-        private void mouseMove(MouseEventArgs e)
+        private void mouseMove(int x, int y)
         {
-            if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
-                return;
-
             if (doubleClick)
                 return;
 
             if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
             {
-                pictureBox1.Left += e.X - mousePoint.X;
-                pictureBox1.Top += e.Y - mousePoint.Y;
+                pictureBox1.Left += x - mousePoint.X;
+                pictureBox1.Top += y - mousePoint.Y;
             }
             else
             {
-                this.Left += e.X - mousePoint.X;
-                this.Top += e.Y - mousePoint.Y;
+                this.Left += x - mousePoint.X;
+                this.Top += y - mousePoint.Y;
             }
         }
 
@@ -579,15 +607,32 @@ namespace Msticky
                 this.pictureBox1.Left -= (int)Math.Floor(x * ((float)zoom / beforeZoom - 1));
                 this.pictureBox1.Top -= (int)Math.Floor(y * ((float)zoom / beforeZoom - 1));
             }
+
+            if (axQTControl1.Visible || ((Control.ModifierKeys & Keys.Control) == Keys.Control))
+            {
+                fit();
+            }
         }
 
         private void fit()
         {
-            this.Top += pictureBox1.Top;
-            this.Left += pictureBox1.Left;
-            pictureBox1.Left = 0;
-            pictureBox1.Top = 0;
-            this.ClientSize = pictureBox1.Size;
+            if (pictureBox1.Image != null)
+            {
+                this.Top += pictureBox1.Top;
+                this.Left += pictureBox1.Left;
+                pictureBox1.Left = 0;
+                pictureBox1.Top = 0;
+                this.ClientSize = pictureBox1.Size;
+            }
+
+            if (axQTControl1.Visible)
+            {
+                this.Top += axQTControl1.Top;
+                this.Left += axQTControl1.Left;
+                axQTControl1.Top = 0;
+                axQTControl1.Left = 0;
+                this.ClientSize = new Size(axQTControl1.Movie.Width + movieMargin.Width, axQTControl1.Movie.Height + movieMargin.Height);
+            }
         }
 
         private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
@@ -746,5 +791,17 @@ namespace Msticky
             pictureBox1.Top += 1;
         }
 
+        private void axQTControl1_MouseDownEvent(object sender, AxQTOControlLib._IQTControlEvents_MouseDownEvent e)
+        {
+            // left button
+            if( e.button == 1 )
+                mouseDown(e.x, e.y, 1);
+        }
+
+        private void axQTControl1_MouseMoveEvent(object sender, AxQTOControlLib._IQTControlEvents_MouseMoveEvent e)
+        {
+            if (e.button == 1)
+                mouseMove(e.x, e.y);
+        }
     }
 }
