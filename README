@@ -13,7 +13,7 @@
  Windows
 
 == openable file type:
- *.bmp *.png *.jpeg *.gif *.psd *.mov
+ *.bmp *.png *.jpeg *.gif *.psd *.tiff *.tga *.mov
 
 == Develop
  Visual C# 2010 Express Edition
