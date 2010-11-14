@@ -63,6 +63,7 @@
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.freezeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.moveWindowLeftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveWindowRightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -317,7 +318,7 @@
             // 
             this.cCWToolStripMenuItem.Image = global::Msticky.Properties.Resources.Image1;
             this.cCWToolStripMenuItem.Name = "cCWToolStripMenuItem";
-            this.cCWToolStripMenuItem.ShortcutKeyDisplayString = "R";
+            this.cCWToolStripMenuItem.ShortcutKeyDisplayString = "E";
             this.cCWToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.cCWToolStripMenuItem.Text = "CCW";
             this.cCWToolStripMenuItem.ToolTipText = "CounterClockWise Rotation";
@@ -349,6 +350,7 @@
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.topToolStripMenuItem1,
             this.freezeToolStripMenuItem1,
+            this.duplicateToolStripMenuItem,
             this.toolStripSeparator5,
             this.moveWindowLeftToolStripMenuItem,
             this.moveWindowRightToolStripMenuItem,
@@ -379,6 +381,14 @@
             this.freezeToolStripMenuItem1.Text = "Freeze";
             this.freezeToolStripMenuItem1.Visible = false;
             this.freezeToolStripMenuItem1.Click += new System.EventHandler(this.freezeToolStripMenuItem_Click);
+            // 
+            // duplicateToolStripMenuItem
+            // 
+            this.duplicateToolStripMenuItem.Name = "duplicateToolStripMenuItem";
+            this.duplicateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+            this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            this.duplicateToolStripMenuItem.Text = "&Duplicate";
+            this.duplicateToolStripMenuItem.Click += new System.EventHandler(this.duplicateToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -550,6 +560,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem topToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem freezeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem duplicateToolStripMenuItem;
     }
 }
 

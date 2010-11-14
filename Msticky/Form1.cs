@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using SimplePsd;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.IO;
 
 using QTOControlLib;
 
@@ -33,6 +34,7 @@ namespace Msticky
         private Boolean icon;
         private Boolean hide;
         private String title;
+        private String openFile;
         private Size movieMargin;
 
         [DllImport("user32.dll")]
@@ -151,6 +153,7 @@ namespace Msticky
             icon = false;
             hide = false;
             title = "Msticky";
+            openFile = null;
             zoom = 10;
 
             this.SetStyle(ControlStyles.UserPaint, true);
@@ -165,6 +168,332 @@ namespace Msticky
             {
                 SetImage(args[1]);
             }
+        }
+
+        // http://tfcduke.developpez.com/tutoriel/format/tga/fichiers/tga_specs.pdf
+        class Tga
+        {
+            enum ImageType : byte
+            {
+                NoImageData = 0,
+                UncompressedColorMappedImage = 1,
+                UncompressedTrueColorImage = 2,
+                UncompressedBlackAndWhiteImage = 3,
+                RLEColorMappedImage = 9,
+                RLETrueColorImage = 10,
+                RLEBalackAndWhiteImage = 11,
+            };
+
+            struct Header
+            {
+                public byte id;
+                public byte colorMapType;
+                public byte imageType;
+                public ColorMapSpecification colorMapSpecification;
+                public ImageSpecification imageSpecification;
+
+                public override string ToString()
+                {
+                    return id + "," + colorMapType + "," + imageType + "," + colorMapSpecification + "," + imageSpecification;
+                }
+            };
+
+            struct ColorMapSpecification
+            {
+                public short firstEntryIndex;
+                public short colorMapLength;
+                public byte colorMapEntrySize;
+
+                public override string ToString()
+                {
+                    return firstEntryIndex + "," + colorMapLength + "," + colorMapEntrySize;
+                }
+            };
+            struct ImageSpecification
+            {
+                public short xOriginOfImage;
+                public short yOriginOfImage;
+                public short imageWidth;
+                public short imageHeight;
+                public byte pixelDepth;
+                public byte imageDescriptor;
+
+                public override string ToString()
+                {
+                    return xOriginOfImage + "," + yOriginOfImage + "," + imageWidth + "," + imageHeight + "," + pixelDepth + "," + imageDescriptor;
+                }
+            };
+
+            Header header;
+
+            abstract class Indexer
+            {
+                public int Index;
+                private int Increment;
+
+                public Indexer(int Increment)
+                {
+                    Index = 18;
+                    this.Increment = Increment;
+                }
+
+                public void Next()
+                {
+                    BeforeIncrement();
+
+                    if (IsIncrement())
+                    {
+                        Index += Increment;
+
+                        AfterIncrement();
+                    }
+                }
+
+                protected abstract bool IsIncrement();
+                protected abstract void BeforeIncrement();
+                protected abstract void AfterIncrement();
+            }
+
+            class UncompressedIndexer : Indexer
+            {
+                public UncompressedIndexer(int Increment) : base(Increment) { }
+
+                protected override bool IsIncrement() { return true; }
+                protected override void BeforeIncrement() { }
+                protected override void AfterIncrement() { }
+            }
+
+            class RLEIndexer : Indexer
+            {
+                bool raw;
+                int count;
+                int num;
+                byte[] Data;
+
+                public RLEIndexer(int Increment, byte[] Data) : base(Increment) { this.Data = Data; SetCount(); }
+
+                void SetCount()
+                {
+                    num = 0;
+
+                    if ((Data[Index] & 0x80) != 0)
+                    {
+                        count = (Data[Index++] & 0x7F) + 1;
+                        raw = false;
+                    }
+                    else
+                    {
+                        count = Data[Index++] + 1;
+                        raw = true;
+                    }
+                }
+
+                protected override bool IsIncrement()
+                {
+                    if (num >= count) { return true; }
+
+                    if (raw) { return true; }
+
+                    return false;
+                }
+                protected override void BeforeIncrement() { num++; }
+                protected override void AfterIncrement() { if (num >= count) SetCount(); }
+            }
+
+            abstract class PixelReader
+            {
+                public int X { get; protected set; }
+                public int Y { get; protected set; }
+                protected byte[] Data { get; private set; }
+                public Indexer Indexer { get; protected set; }
+
+                protected int Height { get; private set; }
+                protected int Width { get; private set; }
+
+                public PixelReader(byte[] Data, int Width, int Height, Indexer Indexer)
+                {
+                    this.X = 0;
+                    this.Y = Height - 1; ;
+                    this.Data = Data;
+                    this.Indexer = Indexer;
+
+                    this.Height = Height;
+                    this.Width = Width;
+                }
+
+                public bool Next()
+                {
+                    Indexer.Next();
+
+                    X = X + 1;
+                    if (X >= Width)
+                    {
+                        X = 0;
+                        Y--;
+                    }
+                    return (Y != -1);
+                }
+
+                public abstract System.Drawing.Color GetColor();
+            };
+
+            class PixelReader16 : PixelReader
+            {
+                public PixelReader16(byte[] Data, int Width, int Height, Indexer Indexer)
+                    : base(Data, Width, Height, Indexer) { }
+
+                public override System.Drawing.Color GetColor()
+                {
+                    byte one = Data[Indexer.Index];
+                    byte two = Data[Indexer.Index + 1];
+
+                    int blue = (one & 0x1F) * 8;
+                    int green = (((one >> 5) & 0x07) + (two & 0x03)) * 8;
+                    int red = ((two >> 2) & 0x1F) * 8;
+                    int alpha = ((two & 0x80) != 0) ? 255 : 0;
+
+                    return System.Drawing.Color.FromArgb(alpha, red, green, blue);
+                }
+            }
+
+            class PixelReader24 : PixelReader
+            {
+                public PixelReader24(byte[] Data, int Width, int Height, Indexer Indexer)
+                    : base(Data, Width, Height, Indexer) { }
+
+                public override System.Drawing.Color GetColor()
+                {
+                    int blue = Data[Indexer.Index];
+                    int green = Data[Indexer.Index + 1];
+                    int red = Data[Indexer.Index + 2];
+                    int alpha = 255;
+
+                    return System.Drawing.Color.FromArgb(alpha, red, green, blue);
+                }
+            }
+
+            class PixelReader32 : PixelReader
+            {
+                public PixelReader32(byte[] Data, int Width, int Height, Indexer Indexer)
+                    : base(Data, Width, Height, Indexer) { }
+
+                public override System.Drawing.Color GetColor()
+                {
+                    int blue = Data[Indexer.Index];
+                    int green = Data[Indexer.Index + 1];
+                    int red = Data[Indexer.Index + 2];
+                    int alpha = Data[Indexer.Index + 3];
+
+                    return System.Drawing.Color.FromArgb(alpha, red, green, blue);
+                }
+            }
+
+            PixelReader GetPixelReader(byte[] bs)
+            {
+                Indexer indexer = null;
+
+                switch (header.imageSpecification.pixelDepth)
+                {
+                    case 16:
+                        if (header.imageSpecification.imageDescriptor != 1)
+                        {
+                            MessageBox.Show("Not support TGA alpha. " + header.imageSpecification);
+                            return null;
+                        }
+                        indexer = (header.imageType == (byte)ImageType.RLETrueColorImage) ? new RLEIndexer(2, bs) : indexer = new UncompressedIndexer(2);
+                        return new PixelReader16(bs, header.imageSpecification.imageWidth, header.imageSpecification.imageHeight, indexer);
+                    case 24:
+                        if (header.imageSpecification.imageDescriptor != 0)
+                        {
+                            MessageBox.Show("Not support TGA alpha. " + header.imageSpecification);
+                            return null;
+                        }
+                        indexer = (header.imageType == (byte)ImageType.RLETrueColorImage) ? new RLEIndexer(3, bs) : indexer = new UncompressedIndexer(3);
+                        return new PixelReader24(bs, header.imageSpecification.imageWidth, header.imageSpecification.imageHeight, indexer);
+                    case 32:
+                        if (header.imageSpecification.imageDescriptor != 8)
+                        {
+                            MessageBox.Show("Not support TGA alpha. " + header.imageSpecification);
+                            return null;
+                        }
+                        indexer = (header.imageType == (byte)ImageType.RLETrueColorImage) ? new RLEIndexer(4, bs) : indexer = new UncompressedIndexer(4);
+                        return new PixelReader32(bs, header.imageSpecification.imageWidth, header.imageSpecification.imageHeight, indexer);
+                }
+                MessageBox.Show("Not support TGA pixel depth. " + header.imageSpecification);
+                return null;
+            }
+
+            public static Bitmap Read(String file)
+            {
+                Bitmap bitmap;
+
+                FileStream fs = new FileStream(file,FileMode.Open,FileAccess.Read);
+                byte[] bs = new byte[fs.Length];
+                fs.Read(bs, 0, bs.Length);
+                fs.Close();
+
+                Tga tga = new Tga();
+                tga.header.id = bs[0];
+                tga.header.colorMapType = bs[1];
+                tga.header.imageType = bs[2];
+
+                tga.header.colorMapSpecification.firstEntryIndex = (short)((short)bs[3] + (short)bs[4] * 256);
+                tga.header.colorMapSpecification.colorMapLength = (short)((short)bs[5] + (short)bs[6] * 256);
+                tga.header.colorMapSpecification.colorMapEntrySize = bs[7];
+
+                tga.header.imageSpecification.xOriginOfImage = (short)((short)bs[8] + (short)bs[9] * 256);
+                tga.header.imageSpecification.yOriginOfImage = (short)((short)bs[10] + (short)bs[11] * 256);
+                tga.header.imageSpecification.imageWidth = (short)((short)bs[12] + (short)bs[13] * 256);
+                tga.header.imageSpecification.imageHeight = (short)((short)bs[14] + (short)bs[15] * 256);
+                tga.header.imageSpecification.pixelDepth = bs[16];
+                tga.header.imageSpecification.imageDescriptor = bs[17];
+
+                bitmap = new Bitmap(tga.header.imageSpecification.imageWidth, tga.header.imageSpecification.imageHeight);
+
+                switch (tga.header.imageType)
+                {
+                    case (byte)ImageType.UncompressedTrueColorImage:
+                        break;
+                    case (byte)ImageType.RLETrueColorImage:
+                        break;
+                    default:
+                        MessageBox.Show("Not implemented TGA Format. imageType:" + tga.header.imageType);
+                        return null;
+                }
+
+                if (tga.header.colorMapSpecification.firstEntryIndex != 0 ||
+                    tga.header.colorMapSpecification.colorMapLength != 0 ||
+                    tga.header.colorMapSpecification.colorMapEntrySize != 0)
+                {
+                    MessageBox.Show("Not support TGA ColorMap. " + tga.header.colorMapSpecification);
+                    return null;
+                }
+
+                if (tga.header.imageSpecification.xOriginOfImage != 0 ||
+                    tga.header.imageSpecification.yOriginOfImage != 0)
+                {
+                    MessageBox.Show("Not support TGA origin. " + tga.header.imageSpecification);
+                    return null;
+                }
+
+                PixelReader reader = tga.GetPixelReader(bs);
+                if (reader == null)
+                {
+                    return null;
+                }
+
+                do
+                {
+                    bitmap.SetPixel(reader.X, reader.Y, reader.GetColor());
+                } while (reader.Next());
+
+                return bitmap;
+            }
+        }
+
+        private Bitmap GetImageTga(String file)
+        {
+            return Tga.Read(file);
         }
 
         private Bitmap GetImagePsd(String file)
@@ -207,7 +536,7 @@ namespace Msticky
         {
             if (!System.IO.File.Exists(file))
             {
-                MessageBox.Show("file not found :-(");
+                MessageBox.Show("file not found :-( " + file);
                 return;
             }
 
@@ -228,6 +557,7 @@ namespace Msticky
             rotate = 0.0f;
 
             title = "Msticky";
+            openFile = null;
 
             if (file.EndsWith("mov"))
             {
@@ -239,6 +569,7 @@ namespace Msticky
                 this.ClientSize = axQTControl1.Size;
                 axQTControl1.FileName = file;
                 title = System.IO.Path.GetFileName(file);
+                openFile = file;
 
                 movieMargin = new Size(axQTControl1.Width - axQTControl1.Movie.Width, axQTControl1.Height - axQTControl1.Movie.Height);
 
@@ -247,7 +578,18 @@ namespace Msticky
             else
             {
                 axQTControl1.Visible = false;
-                bitmapBase = (file.EndsWith("psd")) ? GetImagePsd(file) : new Bitmap(file);
+                if (file.EndsWith("psd"))
+                {
+                    bitmapBase = GetImagePsd(file);
+                }
+                else if (file.EndsWith("tga"))
+                {
+                    bitmapBase = GetImageTga(file);
+                }
+                else
+                {
+                    bitmapBase = new Bitmap(file);
+                }
 
                 if (bitmapBase != null)
                 {
@@ -259,6 +601,7 @@ namespace Msticky
                     this.ClientSize = bitmap.Size;
 
                     title = System.IO.Path.GetFileName(file);
+                    openFile = file;
                     SetPictureBox1Size();
                 }
             }
@@ -283,7 +626,7 @@ namespace Msticky
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd|Movie(*.mov)|*.mov";
+            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga|Movie(*.mov)|*.mov";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 SetImage(ofd.FileName);
@@ -802,6 +1145,18 @@ namespace Msticky
         {
             if (e.button == 1)
                 mouseMove(e.x, e.y);
+        }
+
+        private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFile == null)
+            {
+                Process.Start(System.Windows.Forms.Application.ExecutablePath);
+            }
+            else
+            {
+                Process.Start(System.Windows.Forms.Application.ExecutablePath, "\""+openFile + "\"");
+            }
         }
     }
 }
