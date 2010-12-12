@@ -28,6 +28,7 @@ namespace Msticky
         private Point mousePoint;
         private Size BeforeSize;
         private Point BeforeLocation;
+        private Point BeforePictureBoxLocation;
         private int zoom;
         private float rotate;
         private Boolean doubleClick;
@@ -568,6 +569,7 @@ namespace Msticky
                 axQTControl1.Sizing = QTSizingModeEnum.qtManualSizing;
                 this.ClientSize = axQTControl1.Size;
                 axQTControl1.FileName = file;
+                axQTControl1.Movie.Loop = true;
                 title = System.IO.Path.GetFileName(file);
                 openFile = file;
 
@@ -647,6 +649,9 @@ namespace Msticky
                         break;
                     case Keys.R:
                         resetRotation();
+                        break;
+                    case Keys.H:
+                        FlipHorizontal();
                         break;
                 }
                 return;
@@ -765,7 +770,7 @@ namespace Msticky
             {
                 doubleClick = true;
 
-                iconize();
+                iconize(mousePoint);
             }
         }
 
@@ -915,6 +920,14 @@ namespace Msticky
             }
         }
 
+        private void FlipHorizontal()
+        {
+            if (pictureBox1.Image == null)
+                return;
+            pictureBox1.Image.RotateFlip(RotateFlipType.Rotate180FlipY);
+            pictureBox1.Invalidate();
+        }
+
         private void UpdateZoom(Boolean zoomIn, int mouseX, int mouseY)
         {
             bool adjust = true;
@@ -1051,12 +1064,13 @@ namespace Msticky
             UpdateRotate(false);
         }
 
-        private void iconize()
+        private void iconize(Point point)
         {
             if (!icon)
             {
                 BeforeSize = this.ClientSize;
-                BeforeLocation = pictureBox1.Location;
+                BeforeLocation = this.Location;
+                BeforePictureBoxLocation = pictureBox1.Location;
 
                 this.ClientSize = new Size(32, 32);
                 pictureBox1.Location = new Point(0, 0);
@@ -1068,6 +1082,10 @@ namespace Msticky
                 r.Offset(-p.X, -p.Y);
                 Region = new Region(r);
 
+                Point l = this.PointToScreen(point);
+                l.Offset(new Point(0, -32)); // appropriate
+                this.Location = l;
+
                 icon = true;
 
                 hide = menuStrip1.Visible;
@@ -1078,7 +1096,8 @@ namespace Msticky
                 pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
                 this.ClientSize = BeforeSize;
-                pictureBox1.Location = BeforeLocation;
+                this.Location = BeforeLocation;
+                pictureBox1.Location = BeforePictureBoxLocation;
 
                 Region = null;
 
@@ -1091,7 +1110,7 @@ namespace Msticky
 
         private void iconizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            iconize();
+            iconize(new Point(0, 0));
         }
 
         private void moveWindowLeftToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1157,6 +1176,11 @@ namespace Msticky
             {
                 Process.Start(System.Windows.Forms.Application.ExecutablePath, "\""+openFile + "\"");
             }
+        }
+
+        private void flipHorizontalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FlipHorizontal();
         }
     }
 }
