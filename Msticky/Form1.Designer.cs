@@ -77,6 +77,7 @@
             this.moveImageDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mhelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axQTControl1)).BeginInit();
@@ -171,7 +172,8 @@
             this.viewToolStripMenuItem,
             this.windowToolStripMenuItem,
             this.hideMenuToolStripMenuItem,
-            this.mhelpToolStripMenuItem});
+            this.mhelpToolStripMenuItem,
+            this.settingToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(410, 26);
@@ -492,6 +494,13 @@
             this.mhelpToolStripMenuItem.Text = "&Help";
             this.mhelpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
+            // settingToolStripMenuItem
+            // 
+            this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
+            this.settingToolStripMenuItem.Size = new System.Drawing.Size(62, 22);
+            this.settingToolStripMenuItem.Text = "&Setting";
+            this.settingToolStripMenuItem.Click += new System.EventHandler(this.settingToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -576,6 +585,7 @@
         private System.Windows.Forms.ToolStripMenuItem freezeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem duplicateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem flipHorizontalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
     }
 }
 

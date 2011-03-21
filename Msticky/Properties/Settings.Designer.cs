@@ -45,5 +45,40 @@ namespace Msticky.Properties {
                 this["MenuVisible"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::Msticky.XmlSerializableNameValueCollection Shortcut {
+            get {
+                return ((global::Msticky.XmlSerializableNameValueCollection)(this["Shortcut"]));
+            }
+            set {
+                this["Shortcut"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public float Rotate {
+            get {
+                return ((float)(this["Rotate"]));
+            }
+            set {
+                this["Rotate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int Zoom {
+            get {
+                return ((int)(this["Zoom"]));
+            }
+            set {
+                this["Zoom"] = value;
+            }
+        }
     }
 }

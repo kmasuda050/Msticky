@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -15,6 +16,8 @@ using QTOControlLib;
 
 namespace Msticky
 {
+    delegate void Method();
+
     public partial class Form1 : Form
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -37,6 +40,8 @@ namespace Msticky
         private String title;
         private String openFile;
         private Size movieMargin;
+        private Dictionary<string, ToolStripMenuItem> items;
+        private Dictionary<string, Method> methods;
 
         [DllImport("user32.dll")]
         private static extern bool InsertMenuItem(IntPtr hMenu, UInt32 uItem, bool fByPosition, ref MENUITEMINFO mii);
@@ -63,9 +68,70 @@ namespace Msticky
         const int MIIM_ID = 0x00000002;
         const int MIIM_STRING = 0x00000040;
 
+        private void LoadShortcut()
+        {
+            XmlSerializableNameValueCollection s = Properties.Settings.Default.Shortcut;
+            foreach (string key in items.Keys)
+            {
+                ToolStripMenuItem item = items[key];
+                Keys shortcut = (Keys)int.Parse(s.Get(key));
+
+                item.ShortcutKeyDisplayString = "";
+
+                if ((shortcut & Keys.Control) != 0)
+                {
+                    item.ShortcutKeys = shortcut;
+                }
+                else
+                {
+                    item.ShortcutKeys = Keys.None;
+                    if ((shortcut & Keys.Shift) != 0)
+                        item.ShortcutKeyDisplayString = "Shift+";
+                    item.ShortcutKeyDisplayString += (shortcut & (~Keys.Shift)).ToString();
+                }
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
+
+            Properties.Settings.Default.Reload();
+            if (Properties.Settings.Default.Shortcut == null) Config.Initialize();
+
+            items = new Dictionary<string, ToolStripMenuItem>();
+            items.Add(Config.Key.OpenFile, mopenToolStripMenuItem);
+            items.Add(Config.Key.Close, exitToolStripMenuItem);
+            items.Add(Config.Key.Duplicate, duplicateToolStripMenuItem);
+            items.Add(Config.Key.ZoomIn, zoomInToolStripMenuItem);
+            items.Add(Config.Key.ZoomOut, zoomOutToolStripMenuItem);
+            items.Add(Config.Key.Fit, fitToolStripMenuItem);
+            items.Add(Config.Key.IncreaseOpacity, increaseOpacityToolStripMenuItem);
+            items.Add(Config.Key.DecreaseOpacity, decreaseOpacityToolStripMenuItem);
+            items.Add(Config.Key.OpacityMax, opacityMaxToolStripMenuItem);
+            items.Add(Config.Key.OpacityMin, opacityMinToolStripMenuItem);
+            items.Add(Config.Key.CW, cWToolStripMenuItem);
+            items.Add(Config.Key.CCW, cCWToolStripMenuItem);
+            items.Add(Config.Key.ResetRotation, resetRotationToolStripMenuItem);
+            items.Add(Config.Key.FlipHorizontal, flipHorizontalToolStripMenuItem);
+
+            methods = new Dictionary<string, Method>();
+            methods.Add(Config.Key.OpenFile, OpenFile);
+            methods.Add(Config.Key.Close, Close);
+            methods.Add(Config.Key.Duplicate, Duplicate);
+            methods.Add(Config.Key.ZoomIn, ZoomIn);
+            methods.Add(Config.Key.ZoomOut, ZoomOut);
+            methods.Add(Config.Key.Fit, Fit);
+            methods.Add(Config.Key.IncreaseOpacity, IncreaseOpacity);
+            methods.Add(Config.Key.DecreaseOpacity, DecreaseOpacity);
+            methods.Add(Config.Key.OpacityMax, OpacityMax);
+            methods.Add(Config.Key.OpacityMin, OpacityMin);
+            methods.Add(Config.Key.CW, CW);
+            methods.Add(Config.Key.CCW, CCW);
+            methods.Add(Config.Key.ResetRotation, ResetRotation);
+            methods.Add(Config.Key.FlipHorizontal, FlipHorizontal);
+
+            LoadShortcut();
 
             // add menu
             IntPtr hMenu = GetSystemMenu(this.Handle, 0);
@@ -91,7 +157,7 @@ namespace Msticky
 
         private void UpdateTitle()
         {
-            this.Text = title + " @ " + zoom * 10 + "%";
+            this.Text = title + " @ " + zoom * 10 + "% " + rotate + "°";
         }
 
         private void AddHistory(String file)
@@ -99,7 +165,7 @@ namespace Msticky
             bool duplicate = false;
 
             if (Properties.Settings.Default.Setting == null)
-                Properties.Settings.Default.Setting = new System.Collections.Specialized.StringCollection();
+                Properties.Settings.Default.Setting = new StringCollection();
             for (int i = 0; i < Properties.Settings.Default.Setting.Count; i++)
             {
                 if (Properties.Settings.Default.Setting[i] == file)
@@ -625,7 +691,7 @@ namespace Msticky
             }
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenFile()
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga|Movie(*.mov)|*.mov";
@@ -635,36 +701,39 @@ namespace Msticky
             }
         }
 
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFile();
+        }
+
+        private void ZoomIn() { UpdateZoom(true, 0, 0); }
+        private void ZoomOut() { UpdateZoom(false, 0, 0); }
+        private void IncreaseOpacity() { UpdateOpacity(this.Opacity + 0.2); }
+        private void DecreaseOpacity() { UpdateOpacity(this.Opacity - 0.2); }
+        private void OpacityMax() { UpdateOpacity(1.0); }
+        private void OpacityMin() { UpdateOpacity(0.0); }
+        private void CW() { UpdateRotate(true); }
+        private void CCW() { UpdateRotate(false); }
+
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Shift)
             {
-                switch (e.KeyCode)
+                Keys shortcut = e.KeyCode;
+                if (e.Shift) shortcut |= Keys.Shift;
+
+                NameValueCollection c = Properties.Settings.Default.Shortcut;
+                foreach (string key in c.AllKeys)
                 {
-                    case Keys.A:
-                        UpdateOpacity(1.0);
-                        break;
-                    case Keys.S:
-                        UpdateOpacity(0.0);
-                        break;
-                    case Keys.R:
-                        resetRotation();
-                        break;
-                    case Keys.H:
-                        FlipHorizontal();
-                        break;
+                    if ((int)shortcut == int.Parse(c.Get(key)))
+                    {
+                        methods[key]();
+                        return;
+                    }
                 }
-                return;
             }
 
             switch (e.KeyCode)
             {
-                case Keys.A:
-                    UpdateOpacity(this.Opacity + 0.2);
-                    break;
-                case Keys.S:
-                    UpdateOpacity(this.Opacity - 0.2);
-                    break;
                 case Keys.Right:
                     this.Left += 1;
                     break;
@@ -676,21 +745,6 @@ namespace Msticky
                     break;
                 case Keys.Down:
                     this.Top += 1;
-                    break;
-                case Keys.Z:
-                    fit();
-                    break;
-                case Keys.C:
-                    UpdateZoom(false, 0, 0);
-                    break;
-                case Keys.X:
-                    UpdateZoom(true, 0, 0);
-                    break;
-                case Keys.W:
-                    UpdateRotate(true);
-                    break;
-                case Keys.E:
-                    UpdateRotate(false);
                     break;
             }
         }
@@ -935,7 +989,7 @@ namespace Msticky
             this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             if (zoomIn)
             {
-                zoom += 1;
+                zoom += Properties.Settings.Default.Zoom;
                 if (zoom > 30)
                 {
                     zoom = 30;
@@ -944,7 +998,7 @@ namespace Msticky
             }
             else
             {
-                zoom -= 1;
+                zoom -= Properties.Settings.Default.Zoom;
                 if (zoom < 2)
                 {
                     zoom = 2;
@@ -966,11 +1020,11 @@ namespace Msticky
 
             if (axQTControl1.Visible || ((Control.ModifierKeys & Keys.Control) == Keys.Control))
             {
-                fit();
+                Fit();
             }
         }
 
-        private void fit()
+        private void Fit()
         {
             if (pictureBox1.Image != null)
             {
@@ -993,40 +1047,40 @@ namespace Msticky
 
         private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateZoom(true, 0, 0);
+            ZoomIn();
         }
 
         private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateZoom(false, 0, 0);
+            ZoomOut();
         }
 
         private void fitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fit();
+            Fit();
         }
 
         private void increaseOpacityToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateOpacity(this.Opacity + 0.2);
+            IncreaseOpacity();
         }
 
         private void decreaseOpacityToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateOpacity(this.Opacity - 0.2);
+            DecreaseOpacity();
         }
 
         private void opacityMaxToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateOpacity(1.0);
+            OpacityMax();
         }
 
         private void opacityMinToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateOpacity(0.0);
+            OpacityMin();
         }
 
-        private void resetRotation()
+        private void ResetRotation()
         {
             rotate = 0;
             UpdateBitmap(bitmap, bitmapBase);
@@ -1035,21 +1089,22 @@ namespace Msticky
 
         private void resetRotationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            resetRotation();
+            ResetRotation();
         }
 
         private void UpdateRotate(Boolean cw)
         {
             if (cw)
             {
-                rotate += 2.0f;
+                rotate += Properties.Settings.Default.Rotate;
             }
             else
             {
-                rotate -= 2.0f;
+                rotate -= Properties.Settings.Default.Rotate;
             }
 
             UpdateBitmap(bitmap, bitmapBase);
+            UpdateTitle();
 
             pictureBox1.Invalidate();
         }
@@ -1166,7 +1221,7 @@ namespace Msticky
                 mouseMove(e.x, e.y);
         }
 
-        private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Duplicate()
         {
             if (openFile == null)
             {
@@ -1174,13 +1229,27 @@ namespace Msticky
             }
             else
             {
-                Process.Start(System.Windows.Forms.Application.ExecutablePath, "\""+openFile + "\"");
+                Process.Start(System.Windows.Forms.Application.ExecutablePath, "\"" + openFile + "\"");
             }
+        }
+
+        private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Duplicate();
         }
 
         private void flipHorizontalToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FlipHorizontal();
+        }
+
+        private void settingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form setting = new SettingDialog();
+            setting.ShowDialog();
+            setting.Dispose();
+
+            LoadShortcut();
         }
     }
 }
