@@ -30,7 +30,6 @@ namespace Msticky
             while (reader.GetAttribute("key") != null)
             {
                 reader.ReadAttributeValue();
-                Console.WriteLine(reader.GetAttribute("key") + " - " + reader.GetAttribute("value"));
                 this.Add(reader.GetAttribute("key"), reader.GetAttribute("value"));
 
                 reader.ReadStartElement("property");
