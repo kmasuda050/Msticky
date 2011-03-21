@@ -12,8 +12,8 @@ namespace Msticky
         public static class Key
         {
             public const string OpenFile = "Open File";
-            public const string ChangeAfterHistory = "Change After History";
-            public const string ChangeBeforeHistory = "Change Before History";
+            public const string BeforeHistory = "Before History";
+            public const string AfterHistory = "After History";
             public const string Close = "Close";
 
             public const string ZoomIn = "Zoom In";
@@ -38,8 +38,8 @@ namespace Msticky
 
             Properties.Settings.Default.Shortcut = new XmlSerializableNameValueCollection();
             Properties.Settings.Default.Shortcut.Add(Key.OpenFile, ((int)(Keys.Control | Keys.O)).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.ChangeAfterHistory, ((int)(Keys.Apps)).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.ChangeBeforeHistory, ((int)(Keys.LWin)).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.BeforeHistory, ((int)(Keys.LWin)).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.AfterHistory, ((int)(Keys.Apps)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.Close, ((int)(Keys.Control | Keys.Q)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ZoomIn, ((int)Keys.X).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ZoomOut, ((int)Keys.C).ToString());

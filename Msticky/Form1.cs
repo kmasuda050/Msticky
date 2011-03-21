@@ -101,8 +101,8 @@ namespace Msticky
 
             items = new Dictionary<string, ToolStripMenuItem>();
             items.Add(Config.Key.OpenFile, mopenToolStripMenuItem);
-            items.Add(Config.Key.ChangeAfterHistory, mAfterHistoryToolStripMenuItem);
-            items.Add(Config.Key.ChangeBeforeHistory, mBeforeHistoryToolStripMenuItem);
+            items.Add(Config.Key.AfterHistory, mAfterHistoryToolStripMenuItem);
+            items.Add(Config.Key.BeforeHistory, mBeforeHistoryToolStripMenuItem);
             items.Add(Config.Key.Close, exitToolStripMenuItem);
             items.Add(Config.Key.Duplicate, duplicateToolStripMenuItem);
             items.Add(Config.Key.ZoomIn, zoomInToolStripMenuItem);
@@ -119,8 +119,8 @@ namespace Msticky
 
             methods = new Dictionary<string, Method>();
             methods.Add(Config.Key.OpenFile, OpenFile);
-            methods.Add(Config.Key.ChangeAfterHistory, ChangeAfterHistory);
-            methods.Add(Config.Key.ChangeBeforeHistory, ChangeBeforeHistory);
+            methods.Add(Config.Key.AfterHistory, AfterHistory);
+            methods.Add(Config.Key.BeforeHistory, BeforeHistory);
             methods.Add(Config.Key.Close, Close);
             methods.Add(Config.Key.Duplicate, Duplicate);
             methods.Add(Config.Key.ZoomIn, ZoomIn);
@@ -716,8 +716,8 @@ namespace Msticky
             OpenFile();
         }
 
-        private void ChangeAfterHistory() { ChangeImage(true); }
-        private void ChangeBeforeHistory() { ChangeImage(false); }
+        private void AfterHistory() { ChangeImage(true); }
+        private void BeforeHistory() { ChangeImage(false); }
         private void ZoomIn() { UpdateZoom(true, 0, 0); }
         private void ZoomOut() { UpdateZoom(false, 0, 0); }
         private void IncreaseOpacity() { UpdateOpacity(this.Opacity + 0.2); }
@@ -1289,12 +1289,12 @@ namespace Msticky
 
         private void mAfterHistoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ChangeAfterHistory();
+            AfterHistory();
         }
 
         private void mBeforeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ChangeBeforeHistory();
+            BeforeHistory();
         }
     }
 }

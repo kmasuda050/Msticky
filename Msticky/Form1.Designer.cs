@@ -174,8 +174,8 @@
             this.viewToolStripMenuItem,
             this.windowToolStripMenuItem,
             this.hideMenuToolStripMenuItem,
-            this.mhelpToolStripMenuItem,
-            this.settingToolStripMenuItem});
+            this.settingToolStripMenuItem,
+            this.mhelpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(410, 26);
@@ -213,14 +213,14 @@
             // 
             this.mBeforeHistoryToolStripMenuItem.Name = "mBeforeHistoryToolStripMenuItem";
             this.mBeforeHistoryToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.mBeforeHistoryToolStripMenuItem.Text = "BeforeHistory";
+            this.mBeforeHistoryToolStripMenuItem.Text = "&Before History";
             this.mBeforeHistoryToolStripMenuItem.Click += new System.EventHandler(this.mBeforeToolStripMenuItem_Click);
             // 
             // mAfterHistoryToolStripMenuItem
             // 
             this.mAfterHistoryToolStripMenuItem.Name = "mAfterHistoryToolStripMenuItem";
             this.mAfterHistoryToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.mAfterHistoryToolStripMenuItem.Text = "AfterHistory";
+            this.mAfterHistoryToolStripMenuItem.Text = "&After History";
             this.mAfterHistoryToolStripMenuItem.Click += new System.EventHandler(this.mAfterHistoryToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
