@@ -157,7 +157,7 @@ namespace Msticky
 
         private void UpdateTitle()
         {
-            this.Text = title + " @ " + zoom * 10 + "% " + rotate + "°";
+            this.Text = title + " @ " + zoom + "% " + rotate + "°";
         }
 
         private void AddHistory(String file)
@@ -221,7 +221,7 @@ namespace Msticky
             hide = false;
             title = "Msticky";
             openFile = null;
-            zoom = 10;
+            zoom = 100;
 
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -620,7 +620,7 @@ namespace Msticky
                 bitmap = null;
             }
             pictureBox1.Image = null;
-            zoom = 10;
+            zoom = 100;
             rotate = 0.0f;
 
             title = "Msticky";
@@ -681,13 +681,13 @@ namespace Msticky
         {
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Width = (int)(pictureBox1.Image.Width * zoom * 0.1f);
-                pictureBox1.Height = (int)(pictureBox1.Image.Height * zoom * 0.1f);
+                pictureBox1.Width = (int)(pictureBox1.Image.Width * zoom * 0.01f);
+                pictureBox1.Height = (int)(pictureBox1.Image.Height * zoom * 0.01f);
             }
 
             if (axQTControl1.Visible)
             {
-                axQTControl1.SetScale(zoom * 0.1f);
+                axQTControl1.SetScale(zoom * 0.01f);
             }
         }
 
@@ -990,18 +990,18 @@ namespace Msticky
             if (zoomIn)
             {
                 zoom += Properties.Settings.Default.Zoom;
-                if (zoom > 30)
+                if (zoom > 300)
                 {
-                    zoom = 30;
+                    zoom = 300;
                     adjust = false;
                 }
             }
             else
             {
                 zoom -= Properties.Settings.Default.Zoom;
-                if (zoom < 2)
+                if (zoom < 20)
                 {
-                    zoom = 2;
+                    zoom = 20;
                     adjust = false;
                 }
             }

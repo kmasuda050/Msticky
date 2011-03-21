@@ -31,7 +31,7 @@ namespace Msticky
 
         public static void Initialize()
         {
-            Properties.Settings.Default.Zoom = 1;
+            Properties.Settings.Default.Zoom = 10;
             Properties.Settings.Default.Rotate = 2;
 
             Properties.Settings.Default.Shortcut = new XmlSerializableNameValueCollection();

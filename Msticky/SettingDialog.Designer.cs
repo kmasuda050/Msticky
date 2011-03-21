@@ -35,6 +35,7 @@
             this.zoomIncrementLabel = new System.Windows.Forms.Label();
             this.rotateIncrementLabel = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.button1 = new System.Windows.Forms.Button();
             this.warningLabel = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.ctrlCheckBox = new System.Windows.Forms.CheckBox();
@@ -43,7 +44,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.currentHotkeyLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -117,18 +117,18 @@
             this.zoomIncrementLabel.AutoSize = true;
             this.zoomIncrementLabel.Location = new System.Drawing.Point(19, 52);
             this.zoomIncrementLabel.Name = "zoomIncrementLabel";
-            this.zoomIncrementLabel.Size = new System.Drawing.Size(87, 12);
+            this.zoomIncrementLabel.Size = new System.Drawing.Size(105, 12);
             this.zoomIncrementLabel.TabIndex = 1;
-            this.zoomIncrementLabel.Text = "Zoom Increment";
+            this.zoomIncrementLabel.Text = "Zoom Increment (%)";
             // 
             // rotateIncrementLabel
             // 
             this.rotateIncrementLabel.AutoSize = true;
             this.rotateIncrementLabel.Location = new System.Drawing.Point(17, 15);
             this.rotateIncrementLabel.Name = "rotateIncrementLabel";
-            this.rotateIncrementLabel.Size = new System.Drawing.Size(93, 12);
+            this.rotateIncrementLabel.Size = new System.Drawing.Size(121, 12);
             this.rotateIncrementLabel.TabIndex = 0;
-            this.rotateIncrementLabel.Text = "Rotate Increment";
+            this.rotateIncrementLabel.Text = "Rotate Increment (° )";
             // 
             // splitContainer2
             // 
@@ -154,6 +154,16 @@
             this.splitContainer2.Size = new System.Drawing.Size(436, 327);
             this.splitContainer2.SplitterDistance = 246;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(19, 289);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(143, 26);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Initialize All";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // warningLabel
             // 
@@ -233,16 +243,6 @@
             this.label1.Size = new System.Drawing.Size(50, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "Current";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(19, 289);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(143, 26);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Initialize All";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // SettingDialog
             // 
