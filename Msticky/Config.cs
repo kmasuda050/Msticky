@@ -44,8 +44,8 @@ namespace Msticky
             Properties.Settings.Default.Shortcut.Add(Key.DecreaseOpacity, ((int)Keys.A).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.OpacityMax, ((int)(Keys.Shift | Keys.S)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.OpacityMin, ((int)(Keys.Shift | Keys.A)).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.CW, ((int)Keys.W).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.CCW, ((int)Keys.E).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.CW, ((int)Keys.E).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.CCW, ((int)Keys.W).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ResetRotation, ((int)(Keys.Shift | Keys.R)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.FlipHorizontal, ((int)(Keys.Shift | Keys.H)).ToString());
 
