@@ -626,7 +626,7 @@ namespace Msticky
             title = "Msticky";
             openFile = null;
 
-            if (file.EndsWith("mov"))
+            if (file.EndsWith("mov") || file.EndsWith("mp4"))
             {
                 axQTControl1.Visible = true;
                 axQTControl1.SetScale(1);
@@ -694,7 +694,7 @@ namespace Msticky
         private void OpenFile()
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga|Movie(*.mov)|*.mov";
+            ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga|Movie(*.mov;*.mp4)|*.mov;*.mp4";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 SetImage(ofd.FileName);
