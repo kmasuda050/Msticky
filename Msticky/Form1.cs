@@ -101,6 +101,8 @@ namespace Msticky
 
             items = new Dictionary<string, ToolStripMenuItem>();
             items.Add(Config.Key.OpenFile, mopenToolStripMenuItem);
+            items.Add(Config.Key.ChangeAfterHistory, mAfterHistoryToolStripMenuItem);
+            items.Add(Config.Key.ChangeBeforeHistory, mBeforeHistoryToolStripMenuItem);
             items.Add(Config.Key.Close, exitToolStripMenuItem);
             items.Add(Config.Key.Duplicate, duplicateToolStripMenuItem);
             items.Add(Config.Key.ZoomIn, zoomInToolStripMenuItem);
@@ -117,6 +119,8 @@ namespace Msticky
 
             methods = new Dictionary<string, Method>();
             methods.Add(Config.Key.OpenFile, OpenFile);
+            methods.Add(Config.Key.ChangeAfterHistory, ChangeAfterHistory);
+            methods.Add(Config.Key.ChangeBeforeHistory, ChangeBeforeHistory);
             methods.Add(Config.Key.Close, Close);
             methods.Add(Config.Key.Duplicate, Duplicate);
             methods.Add(Config.Key.ZoomIn, ZoomIn);
@@ -205,7 +209,7 @@ namespace Msticky
                     history.DropDownItems.Add(item);
                     item.Click += delegate
                     {
-                        SetImage(item.Text);
+                        SetImage(item.Text, true);
                     };
                 }
             }
@@ -233,7 +237,7 @@ namespace Msticky
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
-                SetImage(args[1]);
+                SetImage(args[1], true);
             }
         }
 
@@ -599,15 +603,13 @@ namespace Msticky
             g.Dispose();
         }
 
-        private void SetImage(String file)
+        private void SetImage(String file, bool initialize)
         {
             if (!System.IO.File.Exists(file))
             {
                 MessageBox.Show("file not found :-( " + file);
                 return;
             }
-
-            pictureBox1.Location = new Point(0, 0);
 
             if (bitmapBase != null)
             {
@@ -620,8 +622,13 @@ namespace Msticky
                 bitmap = null;
             }
             pictureBox1.Image = null;
-            zoom = 100;
-            rotate = 0.0f;
+
+            if (initialize)
+            {
+                pictureBox1.Location = new Point(0, 0);
+                zoom = 100;
+                rotate = 0.0f;
+            }
 
             title = "Msticky";
             openFile = null;
@@ -641,7 +648,8 @@ namespace Msticky
 
                 movieMargin = new Size(axQTControl1.Width - axQTControl1.Movie.Width, axQTControl1.Height - axQTControl1.Movie.Height);
 
-                AddHistory(file);
+                if (initialize)
+                    AddHistory(file);
             }
             else
             {
@@ -661,12 +669,14 @@ namespace Msticky
 
                 if (bitmapBase != null)
                 {
-                    AddHistory(file);
+                    if (initialize)
+                        AddHistory(file);
 
                     bitmap = new Bitmap(bitmapBase.Width, bitmapBase.Height);
                     UpdateBitmap(bitmap, bitmapBase);
                     pictureBox1.Image = bitmap;
-                    this.ClientSize = bitmap.Size;
+                    if (initialize)
+                        this.ClientSize = bitmap.Size;
 
                     title = System.IO.Path.GetFileName(file);
                     openFile = file;
@@ -697,7 +707,7 @@ namespace Msticky
             ofd.Filter = "Image(*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga)|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.psd;*.tiff;*.tga|Movie(*.mov;*.mp4)|*.mov;*.mp4";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                SetImage(ofd.FileName);
+                SetImage(ofd.FileName, true);
             }
         }
 
@@ -706,6 +716,8 @@ namespace Msticky
             OpenFile();
         }
 
+        private void ChangeAfterHistory() { ChangeImage(true); }
+        private void ChangeBeforeHistory() { ChangeImage(false); }
         private void ZoomIn() { UpdateZoom(true, 0, 0); }
         private void ZoomOut() { UpdateZoom(false, 0, 0); }
         private void IncreaseOpacity() { UpdateOpacity(this.Opacity + 0.2); }
@@ -746,7 +758,27 @@ namespace Msticky
                 case Keys.Down:
                     this.Top += 1;
                     break;
+                case Keys.OemCloseBrackets:
+                    ChangeImage(false);
+                    break;
+                case Keys.OemOpenBrackets:
+                    ChangeImage(true);
+                    break;
             }
+        }
+
+        private void ChangeImage(bool after)
+        {
+            if (openFile == null)
+                return;
+
+            int index = Properties.Settings.Default.Setting.IndexOf(openFile);
+            index = (after) ? index + 1 : index - 1;
+
+            if (index < 0 || Properties.Settings.Default.Setting.Count <= index)
+                return;
+
+            SetImage(Properties.Settings.Default.Setting[index], false);
         }
 
         private void topToolStripMenuItem_Click(object sender, EventArgs e)
@@ -760,7 +792,7 @@ namespace Msticky
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            SetImage(files[0]);
+            SetImage(files[0], true);
         }
 
         private void Form1_DragOver(object sender, DragEventArgs e)
@@ -1250,6 +1282,16 @@ namespace Msticky
             setting.Dispose();
 
             LoadShortcut();
+        }
+
+        private void mAfterHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeAfterHistory();
+        }
+
+        private void mBeforeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeBeforeHistory();
         }
     }
 }
