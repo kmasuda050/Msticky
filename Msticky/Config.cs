@@ -40,10 +40,10 @@ namespace Msticky
             Properties.Settings.Default.Shortcut.Add(Key.ZoomIn, ((int)Keys.X).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ZoomOut, ((int)Keys.C).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.Fit, ((int)Keys.Z).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.IncreaseOpacity, ((int)Keys.A).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.DecreaseOpacity, ((int)Keys.S).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.OpacityMax, ((int)(Keys.Shift | Keys.A)).ToString());
-            Properties.Settings.Default.Shortcut.Add(Key.OpacityMin, ((int)(Keys.Shift | Keys.S)).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.IncreaseOpacity, ((int)Keys.S).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.DecreaseOpacity, ((int)Keys.A).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.OpacityMax, ((int)(Keys.Shift | Keys.S)).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.OpacityMin, ((int)(Keys.Shift | Keys.A)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.CW, ((int)Keys.W).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.CCW, ((int)Keys.E).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ResetRotation, ((int)(Keys.Shift | Keys.R)).ToString());
