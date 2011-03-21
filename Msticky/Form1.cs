@@ -816,7 +816,7 @@ namespace Msticky
             if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
                 return;
 
-            mouseMove(e.X, e.Y);
+            mouseMove(e.X, e.Y, true);
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
@@ -844,7 +844,7 @@ namespace Msticky
             if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
                 return;
 
-            mouseMove(e.X, e.Y);
+            mouseMove(e.X, e.Y, false);
         }
 
         private void mouseDown(int x, int y, int clicks)
@@ -860,7 +860,7 @@ namespace Msticky
             }
         }
 
-        private void mouseMove(int x, int y)
+        private void mouseMove(int x, int y, bool form)
         {
             if (doubleClick)
                 return;
@@ -869,6 +869,9 @@ namespace Msticky
             {
                 pictureBox1.Left += x - mousePoint.X;
                 pictureBox1.Top += y - mousePoint.Y;
+
+                if (form)
+                    mousePoint = new Point(x, y);
             }
             else
             {
@@ -1250,7 +1253,7 @@ namespace Msticky
         private void axQTControl1_MouseMoveEvent(object sender, AxQTOControlLib._IQTControlEvents_MouseMoveEvent e)
         {
             if (e.button == 1)
-                mouseMove(e.x, e.y);
+                mouseMove(e.x, e.y, false);
         }
 
         private void Duplicate()
