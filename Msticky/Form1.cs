@@ -103,6 +103,7 @@ namespace Msticky
             items.Add(Config.Key.OpenFile, mopenToolStripMenuItem);
             items.Add(Config.Key.AfterHistory, mAfterHistoryToolStripMenuItem);
             items.Add(Config.Key.BeforeHistory, mBeforeHistoryToolStripMenuItem);
+            items.Add(Config.Key.OpenContainingFolder, mOpenContainingFolderToolStripMenuItem);
             items.Add(Config.Key.Close, exitToolStripMenuItem);
             items.Add(Config.Key.Duplicate, duplicateToolStripMenuItem);
             items.Add(Config.Key.ZoomIn, zoomInToolStripMenuItem);
@@ -121,6 +122,7 @@ namespace Msticky
             methods.Add(Config.Key.OpenFile, OpenFile);
             methods.Add(Config.Key.AfterHistory, AfterHistory);
             methods.Add(Config.Key.BeforeHistory, BeforeHistory);
+            methods.Add(Config.Key.OpenContainingFolder, OpenContainingFolder);
             methods.Add(Config.Key.Close, Close);
             methods.Add(Config.Key.Duplicate, Duplicate);
             methods.Add(Config.Key.ZoomIn, ZoomIn);
@@ -726,6 +728,12 @@ namespace Msticky
         private void OpacityMin() { UpdateOpacity(0.0); }
         private void CW() { UpdateRotate(true); }
         private void CCW() { UpdateRotate(false); }
+        private void OpenContainingFolder()
+        {
+            if (openFile == null)
+                return;
+            System.Diagnostics.Process.Start("EXPLORER.EXE", @"/select," + openFile);
+        }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -1295,6 +1303,11 @@ namespace Msticky
         private void mBeforeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BeforeHistory();
+        }
+
+        private void openContainingFolderStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenContainingFolder();
         }
     }
 }

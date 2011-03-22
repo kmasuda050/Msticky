@@ -253,6 +253,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingDialog";
+            this.ShowIcon = false;
             this.Text = "Setting";
             this.TopMost = true;
             this.splitContainer1.Panel1.ResumeLayout(false);

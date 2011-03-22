@@ -14,6 +14,7 @@ namespace Msticky
             public const string OpenFile = "Open File";
             public const string BeforeHistory = "Before History";
             public const string AfterHistory = "After History";
+            public const string OpenContainingFolder = "Open Containing Folder";
             public const string Close = "Close";
 
             public const string ZoomIn = "Zoom In";
@@ -40,6 +41,7 @@ namespace Msticky
             Properties.Settings.Default.Shortcut.Add(Key.OpenFile, ((int)(Keys.Control | Keys.O)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.BeforeHistory, ((int)(Keys.LWin)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.AfterHistory, ((int)(Keys.Apps)).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.OpenContainingFolder, ((int)(Keys.Control | Keys.C)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.Close, ((int)(Keys.Control | Keys.Q)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ZoomIn, ((int)Keys.X).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ZoomOut, ((int)Keys.C).ToString());
