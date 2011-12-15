@@ -29,6 +29,7 @@ namespace Msticky
             public const string ResetRotation = "Reset Rotation";
             public const string FlipHorizontal = "Flip Horizontal";
 
+            public const string PasteFromClipboard = "PasteFromClipboard";
             public const string Duplicate = "Duplicate";
         }
 
@@ -54,6 +55,7 @@ namespace Msticky
             Properties.Settings.Default.Shortcut.Add(Key.CCW, ((int)Keys.W).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.ResetRotation, ((int)(Keys.Shift | Keys.R)).ToString());
             Properties.Settings.Default.Shortcut.Add(Key.FlipHorizontal, ((int)(Keys.Shift | Keys.H)).ToString());
+            Properties.Settings.Default.Shortcut.Add(Key.PasteFromClipboard, ((int)(Keys.Shift | Keys.V)).ToString());
 
             Properties.Settings.Default.Shortcut.Add(Key.Duplicate, ((int)(Keys.Control | Keys.D)).ToString());
             Properties.Settings.Default.Save();

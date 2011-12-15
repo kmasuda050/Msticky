@@ -136,6 +136,7 @@ namespace Msticky
             methods.Add(Config.Key.CCW, CCW);
             methods.Add(Config.Key.ResetRotation, ResetRotation);
             methods.Add(Config.Key.FlipHorizontal, FlipHorizontal);
+            methods.Add(Config.Key.PasteFromClipboard, PasteFromClipboard);
 
             LoadShortcut();
 
@@ -603,6 +604,33 @@ namespace Msticky
             g.TranslateTransform(-bitmapBase.Width / 2, -bitmapBase.Height / 2);
             g.DrawImage(bitmapBase, 0, 0, bitmapBase.Width, bitmapBase.Height);
             g.Dispose();
+        }
+
+        // http://www.atmarkit.co.jp/fdotnet/dotnettips/263apppath/apppath.html
+        private static string GetFileSystemPath(Environment.SpecialFolder folder)
+        {
+            string path = String.Format(@"{0}\{1}\{2}", Environment.GetFolderPath(folder), Application.CompanyName, Application.ProductName);
+
+            lock (typeof(Application))
+            {
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
+            return path;
+        }
+
+        private void PasteFromClipboard()
+        {
+            IDataObject dataObject = Clipboard.GetDataObject();
+            if (!dataObject.GetDataPresent(DataFormats.Bitmap))
+                return;
+            Image image = (Image)dataObject.GetData(DataFormats.Bitmap);
+            String path = System.IO.Path.Combine(GetFileSystemPath(Environment.SpecialFolder.LocalApplicationData), "Clipboard");
+            image.Save(path);
+
+            SetImage(path, true);
         }
 
         private void SetImage(String file, bool initialize)
